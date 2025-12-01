@@ -73,6 +73,7 @@ pyaml==25.7.0
 PyAudio==0.2.14
 pydantic==2.12.5
 pydantic_core==2.41.5
+pydub==0.25.1
 pyparsing==3.2.5
 python-dateutil==2.9.0.post0
 python-multipart==0.0.20
