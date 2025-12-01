@@ -5,7 +5,10 @@ import os
 import openwakeword
 import numpy as np
 from collections           import deque
+from silero_vad            import load_silero_vad, get_speech_timestamps
 import pyaudio
+import time
+import requests
 
 def init_logger():
 
@@ -35,6 +38,52 @@ def init_logger():
 init_logger()
 
 
+
+def in_docker():
+ return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")
+
+def get_running_ip():
+    if in_docker():
+        return "host.docker.internal"
+    else:
+        return app_settings.llm.run_ip
+
+
+def capture_audio_after_wakeword(vad_model, last_audios, silence_threshold   = 1.0):
+
+    recorded_audio      = []
+
+    logging.info("Capturing speech...")
+    start_time = time.time()
+
+
+    while True:
+        try:
+            mic_audio         = np.frombuffer(mic_stream.read(CHUNK,
+                                                              exception_on_overflow=False),
+                                                              dtype=np.int16)
+
+            recorded_audio.append(mic_audio)
+            samples           = np.concatenate(recorded_audio, axis=0)
+            if len(samples) < (silence_threshold * 16000):
+                continue
+            samples           = samples.astype(np.float32) / 32768.0
+            tail_audio        = samples[-int(silence_threshold * 16000):]
+            speech_timestamps = get_speech_timestamps(tail_audio, vad_model, sampling_rate=16000)
+            is_silence        = len(speech_timestamps) == 0
+            if is_silence:
+                break
+        except Exception as e:
+            logging.error(f"\tError reading from audio stream. (\n{e}\n)")
+            break
+
+    elapsed_time   = time.time() - start_time
+    recorded_audio = list(last_audios) + recorded_audio
+    full_audio     = np.concatenate(recorded_audio).astype(np.float32) / 32768.0  # Normalize for Whisper
+    audio_len      = len(full_audio) / 16000
+    logging.info(f"[Timing] Audio capturing took {elapsed_time:.2f} seconds. [Audio len: {audio_len:.2F} sec]")
+    return full_audio
+
 if __name__ == "__main__":
     logging.info('Start')
     openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
@@ -45,7 +94,7 @@ if __name__ == "__main__":
         inference_framework            = "onnx",
         enable_speex_noise_suppression = True
     )
-
+    vad_model    = load_silero_vad()
     audio_buffer = deque(maxlen=10)
     CHUNK        = 4096
     FORMAT       = pyaudio.paInt16
@@ -67,4 +116,12 @@ if __name__ == "__main__":
         for mdl in prediction.keys():
             if prediction[mdl] >= 0.3:
                 logging.info('--- wakeword ---')
+                recorded_audio = capture_audio_after_wakeword(vad_model, audio_buffer)
+
+                if isinstance(recorded_audio, np.ndarray):
+                    # Convert numpy array to list for JSON serialization
+                    recorded_audio = recorded_audio.tolist()
+                response = requests.post(f"http://{get_running_ip()}:8013/transcribe/",json={"audio_input": recorded_audio})
+                result   = response.json()
+                logging.info(result)
 
