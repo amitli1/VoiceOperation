@@ -46,7 +46,7 @@ def get_running_ip():
     if in_docker():
         return "host.docker.internal"
     else:
-        return app_settings.llm.run_ip
+        return "127.0.0.1"
 
 
 def capture_audio_after_wakeword(vad_model, last_audios, silence_threshold   = 1.0):
@@ -106,7 +106,7 @@ if __name__ == "__main__":
                             rate=MIC_SR,
                             input=True,
                             frames_per_buffer=CHUNK)
-    logging.info('Start listen for wakeword')
+    logging.info('\n\n\nStart listen for wakeword')
     while True:
         mic_audio = np.frombuffer(mic_stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
         audio_buffer.append(mic_audio)
@@ -123,5 +123,6 @@ if __name__ == "__main__":
                     recorded_audio = recorded_audio.tolist()
                 response = requests.post(f"http://{get_running_ip()}:8013/transcribe/",json={"audio_input": recorded_audio})
                 result   = response.json()
-                logging.info(result)
+                text     = result['transcription']
+                logging.info(text)
 
