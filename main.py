@@ -1,4 +1,3 @@
-from app_config.settings import app_settings
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import logging
 import torch

@@ -5,7 +5,7 @@ If none of the commands match, return "command": null.
 Available Commands (use only these):
 
 1. General Overview tab:
-   Trigger phrases: show general, open general, go to home screen, show overview, home, main screen
+   Trigger phrases: show general, open general, go to home screen, show overview, home, main screen, or other similar overview commands:
    API: http://localhost:8080/show_overview
 
 2. Power Management tab:
