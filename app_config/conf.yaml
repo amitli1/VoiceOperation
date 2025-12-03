@@ -6,7 +6,6 @@ audio:
   vad_threshold: 0.6
   stt:
     model_size: large-v3-turbo #/models/faster-whisper-large-v3
-    #model_size:  /mnt/nvme/models/faster-whisper-large-v3-turbo/models--mobiuslabsgmbh--faster-whisper-large-v3-turbo/snapshots/0c94664816ec82be77b20e824c8e8675995b0029
     num_beams: 5
     confidence_threshold: 0.36
     compression_ratio_threshold: 2.4
@@ -18,16 +17,6 @@ audio:
     channels: 1
     chunk: 1280
     sample_rate: 16000
-
-
-    models_dir: {HeyBuddy: "audio/wakeword/hey_buddy_models" ,Buddy: "audio/wakeword/buddy_models"}
-    # models_dir:  "audio/wakeword/hey_buddy_models"
-    # detector: hey_buddy #"hey_buddy" #buddy is default. hey_buddy is 2-model policy atm
-    detector: mixed #"hey_buddy" #buddy is default. hey_buddy is 2-model policy atm
-    run_vosk: false
-    run_whisper: false
-    describe_window_seconds: 15  # how long the describe window is open
-    describe_window_max_q: 2
 
 
 test:

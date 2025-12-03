@@ -1,4 +1,5 @@
 from app_config.settings import app_settings
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import logging
 import torch
 import os
@@ -9,6 +10,7 @@ from silero_vad            import load_silero_vad, get_speech_timestamps
 import pyaudio
 import time
 import requests
+import json
 
 def init_logger():
 
@@ -84,10 +86,61 @@ def capture_audio_after_wakeword(vad_model, last_audios, silence_threshold   = 1
     logging.info(f"[Timing] Audio capturing took {elapsed_time:.2f} seconds. [Audio len: {audio_len:.2F} sec]")
     return full_audio
 
+
+def load_llm():
+    model_name = "Qwen/Qwen3-0.6B"
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model     = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        dtype="auto",
+        device_map="auto"
+    )
+
+    with open("nlp/system_prompt.txt", "r", encoding="utf-8") as f:
+        system_prompt = f.read()
+
+    return tokenizer, model, system_prompt
+
+def run_llm(tokenizer, model, system_prompt, user_prompt):
+
+    full_prompt = (
+        f"<|im_start|>system\n{system_prompt}<|im_end|>\n"
+        f"<|im_start|>user\n{user_prompt}<|im_end|>\n"
+        f"<|im_start|>assistant\n"
+    )
+
+    inputs = tokenizer(full_prompt, return_tensors="pt").to(model.device)
+
+    output_tokens = model.generate(
+        **inputs,
+        max_new_tokens = 256,
+        do_sample      = False,
+    )
+
+    response_text = tokenizer.decode(output_tokens[0], skip_special_tokens=True)
+    start         = response_text.rfind("{")
+    end           = response_text.rfind("}") + 1
+    json_block    = response_text[start:end]
+
+    try:
+        result = json.loads(json_block)
+    except Exception as e:
+        logging.error(f'Error while load json: {e}')
+        result = None
+
+    return result
+
+def send_command(command):
+    response = requests.post(command, json={})
+    logging.info(f"Command status code: {response.status_code}")
+    logging.info(f"Response body      : {response.text}")
+
 if __name__ == "__main__":
     logging.info('Start')
-    openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
+    #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
     logging.info(f'Cuda: {torch.cuda.is_available()}')
+
+    llm_tokenizer, llm_model, system_prompt = load_llm()
 
     owwModel = openwakeword.Model(
         wakeword_models                = ["hey_jarvis"],
@@ -124,5 +177,12 @@ if __name__ == "__main__":
                 response = requests.post(f"http://{get_running_ip()}:8013/transcribe/",json={"audio_input": recorded_audio})
                 result   = response.json()
                 text     = result['transcription']
-                logging.info(text)
+                logging.info(f'Text: {text}')
+
+                command = run_llm(llm_tokenizer, llm_model, system_prompt, text)
+                logging.info(f'Command: {command}')
+                send_command(command)
+
+
+
 
