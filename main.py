@@ -1,7 +1,8 @@
 from nlp.LLM_Handler     import LLM_Handler
 from collections         import deque
 from silero_vad          import load_silero_vad, get_speech_timestamps
-from app_config.settings import app_settings
+from scipy.io.wavfile    import write
+from datetime            import datetime
 import numpy             as np
 import logging
 import torch
@@ -11,11 +12,18 @@ import pyaudio
 import time
 import requests
 import json
-from datetime import datetime
+
+
 
 
 def get_timestamp_string():
     return datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+
+CURRENT_DATE = get_timestamp_string()
+
+def create_output_folder():
+    folder_path = os.path.join("output", CURRENT_DATE)
+    os.makedirs(folder_path, exist_ok=True)
 
 def init_logger():
 
@@ -28,7 +36,6 @@ def init_logger():
 
     # # File handler
     os.makedirs("logs", exist_ok=True)
-    CURRENT_DATE = get_timestamp_string()
     log_name     = f"logs/log_{CURRENT_DATE}.txt"
     file_handler = logging.FileHandler(log_name)
     file_handler.setFormatter(formatter)
@@ -42,6 +49,14 @@ def init_logger():
     logger.addHandler(file_handler)
 
 init_logger()
+
+def write_samples(fname, audio, samplerate=16000):
+    start_time    = time.time()
+    output_folder = f'output/{CURRENT_DATE}/{fname}.wav'
+    write(output_folder, samplerate, audio)
+    end_time = time.time()
+    logging.info(f"\t[{(end_time-start_time):.2f} ms] Write audio (after wakeword) to: {output_folder}")
+
 
 def in_docker():
  return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")
@@ -151,6 +166,7 @@ def send_command(user_command):
 
 if __name__ == "__main__":
     logging.info('Start')
+    create_output_folder()
     #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
     logging.info(f'Cuda: {torch.cuda.is_available()}')
     llm_model = LLM_Handler()
@@ -167,13 +183,14 @@ if __name__ == "__main__":
     CHANNELS     = 1
     MIC_SR       = 16000
     audio        = pyaudio.PyAudio()
-    mic_stream = audio.open(format=FORMAT,
-                            channels=CHANNELS,
-                            rate=MIC_SR,
-                            input=True,
-                            frames_per_buffer=CHUNK)
+    mic_stream = audio.open(format            = FORMAT,
+                            channels          = CHANNELS,
+                            rate              = MIC_SR,
+                            input             = True,
+                            frames_per_buffer = CHUNK)
 
     logging.info('\n\n\nStart listen for wakeword')
+    file_num = 0
     while True:
         mic_audio = np.frombuffer(mic_stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
         audio_buffer.append(mic_audio)
@@ -186,7 +203,10 @@ if __name__ == "__main__":
                 if (len(recorded_audio) / MIC_SR) <= 1.05:
                     audio_buffer.clear()
                     logging.info('\n\n\nStart listen for wakeword')
-                    continue
+                    break
+
+                file_num = file_num + 1
+                write_samples(f"out_{file_num}", recorded_audio, samplerate=16000)
 
                 if isinstance(recorded_audio, np.ndarray):
                     recorded_audio = recorded_audio.tolist()
@@ -201,6 +221,7 @@ if __name__ == "__main__":
 
                 audio_buffer.clear()
                 logging.info('\n\n\nStart listen for wakeword')
+                break
 
 
 
