@@ -1,18 +1,23 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from nlp.LLM_Handler     import LLM_Handler
+from collections         import deque
+from silero_vad          import load_silero_vad, get_speech_timestamps
+from app_config.settings import app_settings
+import numpy             as np
 import logging
 import torch
 import os
 import openwakeword
-import numpy as np
-from collections           import deque
-from silero_vad            import load_silero_vad, get_speech_timestamps
 import pyaudio
 import time
 import requests
 import json
+from datetime import datetime
+
+
+def get_timestamp_string():
+    return datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 
 def init_logger():
-
 
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
@@ -22,11 +27,11 @@ def init_logger():
                                      datefmt='%Y-%m-%d %H:%M:%S')
 
     # # File handler
-    # os.makedirs("/mnt/nvme/outputs", exist_ok=True)
-    # CURRENT_DATE = get_timestamp_string()
-    # log_name     = f"/mnt/nvme/outputs/log_{CURRENT_DATE}.txt"
-    # file_handler = logging.FileHandler(log_name)
-    # file_handler.setFormatter(formatter)
+    os.makedirs("logs", exist_ok=True)
+    CURRENT_DATE = get_timestamp_string()
+    log_name     = f"logs/log_{CURRENT_DATE}.txt"
+    file_handler = logging.FileHandler(log_name)
+    file_handler.setFormatter(formatter)
 
     # Console handler
     console_handler = logging.StreamHandler()
@@ -34,11 +39,9 @@ def init_logger():
 
     # Add handlers to the logger
     logger.addHandler(console_handler)
-    # logger.addHandler(file_handler)
+    logger.addHandler(file_handler)
 
 init_logger()
-
-
 
 def in_docker():
  return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")
@@ -85,61 +88,72 @@ def capture_audio_after_wakeword(vad_model, last_audios, silence_threshold   = 1
     logging.info(f"[Timing] Audio capturing took {elapsed_time:.2f} seconds. [Audio len: {audio_len:.2F} sec]")
     return full_audio
 
+#
+# def get_speech_status(vad_model, audio_chunk, sample_rate=app_settings.audio.vad.sample_rate):
+#     audio_chunk = audio_chunk.astype(np.float32) / 32768.0
+#     speech_prob = vad_model(torch.from_numpy(audio_chunk), sample_rate).item()
+#     return speech_prob > app_settings.audio.vad.vad_threshold
+#
+# def source_capture_audio_after_wakeword(last_audios):
+#         recorded_audio = []
+#         for audio_history in last_audios:
+#             recorded_audio.append(audio_history)
+#         silence_duration = 0
+#         silence_threshold = 0.4
+#         grace_period = 0.8
+#         grace_time_elapsed = 0.0
+#         speech_detected = False
+#
+#         logging.info("[***] Capturing speech... (online process)")
+#         start_time = time.time()
+#
+#         while True:
+#             try:
+#                 mic_audio = np.frombuffer(
+#                     mic_stream.read(app_settings.audio.vad.vad_chunk, exception_on_overflow=False),
+#                     dtype=np.int16
+#                 )
+#             except IOError:
+#                 logging.error("Error reading from audio stream.")
+#                 break
+#             recorded_audio.append(mic_audio)
+#
+#             if not speech_detected:
+#                 if get_speech_status(mic_audio):
+#                     speech_detected = True
+#                     logging.info(f"[pid = {os.getpid()}] Speech detected. Now monitoring for silence.")
+#                 else:
+#                     grace_time_elapsed += app_settings.audio.vad.vad_chunk / app_settings.audio.vad.sample_rate
+#                     if grace_time_elapsed >= grace_period:
+#                         logging.info("No speech detected during grace period. Stopping capture.")
+#                         break
+#             else:
+#                 if not self.get_speech_status(mic_audio):
+#                     silence_duration += app_settings.audio.vad.vad_chunk / app_settings.audio.vad.sample_rate
+#                     if silence_duration >= silence_threshold:
+#                         logging.info("Silence detected, stopping capture.")
+#                         break
+#                 else:
+#                     silence_duration = 0
+#
+#         elapsed_time = time.time() - start_time
+#         logging.info(f"[***] Audio capturing took {elapsed_time:.2f} seconds.")
+#         full_audio = np.concatenate(recorded_audio).astype(np.float32)
+#         return full_audio
 
-def load_llm():
-    model_name = "Qwen/Qwen3-0.6B"
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model     = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        dtype="auto",
-        device_map="auto"
-    )
 
-    with open("nlp/system_prompt.txt", "r", encoding="utf-8") as f:
-        system_prompt = f.read()
 
-    return tokenizer, model, system_prompt
-
-def run_llm(tokenizer, model, system_prompt, user_prompt):
-
-    full_prompt = (
-        f"<|im_start|>system\n{system_prompt}<|im_end|>\n"
-        f"<|im_start|>user\n{user_prompt}<|im_end|>\n"
-        f"<|im_start|>assistant\n"
-    )
-
-    inputs = tokenizer(full_prompt, return_tensors="pt").to(model.device)
-
-    output_tokens = model.generate(
-        **inputs,
-        max_new_tokens = 256,
-        do_sample      = False,
-    )
-
-    response_text = tokenizer.decode(output_tokens[0], skip_special_tokens=True)
-    start         = response_text.rfind("{")
-    end           = response_text.rfind("}") + 1
-    json_block    = response_text[start:end]
-
-    try:
-        result = json.loads(json_block)
-    except Exception as e:
-        logging.error(f'Error while load json: {e}')
-        result = None
-
-    return result
-
-def send_command(command):
-    response = requests.post(command, json={})
-    logging.info(f"Command status code: {response.status_code}")
-    logging.info(f"Response body      : {response.text}")
+def send_command(user_command):
+    command  = f'http://localhost:8080/{user_command}'
+    #response = requests.post(command, json={})
+    #logging.info(f"Command status code: {response.status_code}")
+    #logging.info(f"Response body      : {response.text}")
 
 if __name__ == "__main__":
     logging.info('Start')
     #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
     logging.info(f'Cuda: {torch.cuda.is_available()}')
-
-    llm_tokenizer, llm_model, system_prompt = load_llm()
+    llm_model = LLM_Handler()
 
     owwModel = openwakeword.Model(
         wakeword_models                = ["hey_jarvis"],
@@ -158,6 +172,7 @@ if __name__ == "__main__":
                             rate=MIC_SR,
                             input=True,
                             frames_per_buffer=CHUNK)
+
     logging.info('\n\n\nStart listen for wakeword')
     while True:
         mic_audio = np.frombuffer(mic_stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
@@ -167,20 +182,25 @@ if __name__ == "__main__":
 
         for mdl in prediction.keys():
             if prediction[mdl] >= 0.3:
-                logging.info('--- wakeword ---')
                 recorded_audio = capture_audio_after_wakeword(vad_model, audio_buffer)
+                if (len(recorded_audio) / MIC_SR) <= 1.05:
+                    audio_buffer.clear()
+                    logging.info('\n\n\nStart listen for wakeword')
+                    continue
 
                 if isinstance(recorded_audio, np.ndarray):
-                    # Convert numpy array to list for JSON serialization
                     recorded_audio = recorded_audio.tolist()
                 response = requests.post(f"http://{get_running_ip()}:8013/transcribe/",json={"audio_input": recorded_audio})
                 result   = response.json()
                 text     = result['transcription']
                 logging.info(f'Text: {text}')
 
-                command = run_llm(llm_tokenizer, llm_model, system_prompt, text)
+                command = llm_model.run_llm(text)
                 logging.info(f'Command: {command}')
                 send_command(command)
+
+                audio_buffer.clear()
+                logging.info('\n\n\nStart listen for wakeword')
 
 
 

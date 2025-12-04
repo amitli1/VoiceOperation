@@ -2,10 +2,6 @@ from typing import Dict
 from pydantic import BaseModel
 import yaml
 
-class LLMConfig(BaseModel):
-    model: str
-
-
 class STTConfig(BaseModel):
     model_size: str
     num_beams: int
@@ -21,11 +17,7 @@ class WakewordConfig(BaseModel):
     channels: int
     chunk: int
     sample_rate: int
-    detector: str
-    run_vosk: bool
-    run_whisper: bool
-    describe_window_seconds: int
-    describe_window_max_q: int
+
 
 class AudioConfig(BaseModel):
     vad_threshold: float
@@ -40,7 +32,6 @@ class TestConfig(BaseModel):
 
 
 class Settings(BaseModel):
-    llm: LLMConfig
     audio: AudioConfig
     test: TestConfig
 

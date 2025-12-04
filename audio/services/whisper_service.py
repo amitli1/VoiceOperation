@@ -9,25 +9,19 @@ import math
 import uvicorn
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from app_config.settings import app_settings
-# import torch
-# torch.backends.cudnn.benchmark = True
 app = FastAPI()
 
 # Load model once at startup
-NUM_BEAMS = app_settings.audio.stt.num_beams
-language = app_settings.audio.language
+NUM_BEAMS  = app_settings.audio.stt.num_beams
+language   = app_settings.audio.language
 model_size = app_settings.audio.stt.model_size
-# model_size = "ivrit-ai/whisper-large-v3-turbo-ct2"
+
 
 # Run on GPU with FP16
 print(f"Run with: {model_size}, NUM_BEAMS: {NUM_BEAMS}, language: {language}")
 model = WhisperModel(model_size, device="cuda", compute_type="float16")
 #model = WhisperModel(rf'/root/.cache/huggingface/models--openai--whisper-large-v3-turbo', device="cuda", compute_type="float16")
 
-# or run on GPU with INT8
-# model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
-# or run on CPU with INT8
-# model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
 @app.post("/transcribe/")
 async def transcribe_api(file: UploadFile = File(None), request: Request = None):
@@ -41,7 +35,7 @@ async def transcribe_api(file: UploadFile = File(None), request: Request = None)
 
     elif request:
         print("Received audio request to transcribe")
-        data = await request.json()
+        data             = await request.json()
         audio_input_data = data.get("audio_input")
 
         if isinstance(audio_input_data, str):
@@ -65,8 +59,8 @@ async def transcribe_api(file: UploadFile = File(None), request: Request = None)
 
         print(f"[{first_segment.start:.2f}s -> {first_segment.end:.2f}s] {first_segment.text}")
 
-        transcription = first_segment.text + " "
-        log_probs = [first_segment.avg_logprob]
+        transcription      = first_segment.text + " "
+        log_probs          = [first_segment.avg_logprob]
         compression_ratios = [first_segment.compression_ratio]
 
         for segment in segments:
@@ -75,14 +69,14 @@ async def transcribe_api(file: UploadFile = File(None), request: Request = None)
             log_probs.append(segment.avg_logprob)
             compression_ratios.append(segment.compression_ratio)
 
-        avg_logprob = sum(log_probs) / len(log_probs) if log_probs else 0
+        avg_logprob       = sum(log_probs) / len(log_probs) if log_probs else 0
         compression_ratio = sum(compression_ratios) / len(compression_ratios) if compression_ratios else 0
-        confidence = math.exp(avg_logprob)
+        confidence        = math.exp(avg_logprob)
 
         result = {
-            "transcription": transcription.strip(),
+            "transcription"    : transcription.strip(),
             "compression_ratio": compression_ratio,
-            "confidence": confidence
+            "confidence"       : confidence
         }
 
         end = time.perf_counter()

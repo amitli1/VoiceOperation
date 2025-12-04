@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "properties": {
+        "command": {
+            "type": "string",
+            "enum": [
+                "show_overview",
+                "show_power_screen",
+                "show_navigation",
+                "show_inventory"
+            ]
+        }
+    },
+    "required": ["command"]
+}
