@@ -40,7 +40,8 @@ class LLM_Handler:
             messages,
             tokenize              = False,
             add_generation_prompt = True,
-            enable_thinking       = False
+            enable_thinking       = False,
+            temperature           = 0.0
 
         )
 

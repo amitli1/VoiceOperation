@@ -8,3 +8,7 @@ if __name__ == "__main__":
     llm_model = LLM_Handler()
 
     print(llm_model.run_llm("Where am I located?"))
+    print(llm_model.run_llm("Thank you"))
+    print(llm_model.run_llm("I'll show you"))
+    print(llm_model.run_llm("Good moorning"))
+    print(llm_model.run_llm("nothing"))
