@@ -5,6 +5,7 @@
 3. Qwen/Qwen3-1.7B = ~4240 GB
 4. Qwen/Qwen3-0.6B = ~1780 GB
 5. Total GPU       = ~4380 GB (faster-whisper+tts+qwen3-0.6B)
+6. Total GPU       = ~6800 GB (faster-whisper+tts+qwen3-1.7B)
 
 ## 🧪 Qwen/Qwen3-1.7B/0.6B:
 1. prompt: 32K

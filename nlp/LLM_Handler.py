@@ -7,6 +7,7 @@ class LLM_Handler:
 
     def __init__(self):
         model_name     = "Qwen/Qwen3-0.6B"
+        #model_name = "Qwen/Qwen3-1.7B"
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.hf_model  = AutoModelForCausalLM.from_pretrained(
             model_name,
@@ -20,8 +21,8 @@ class LLM_Handler:
         )
         self.model = outlines.models.Transformers(self.hf_model, self.tokenizer)
 
-        with open("nlp/system_prompt.txt", "r", encoding="utf-8") as f:
-        #with open("nlp/system_no_examples.txt", "r", encoding="utf-8") as f:
+        #with open("nlp/system_prompt.txt", "r", encoding="utf-8") as f:
+        with open("nlp/system_no_examples.txt", "r", encoding="utf-8") as f:
             self.system_prompt = f.read()
 
         with open("nlp/json_schema.txt", "r", encoding="utf-8") as f:
