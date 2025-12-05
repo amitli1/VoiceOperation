@@ -56,9 +56,6 @@ Command: show_navigation
 User: "Crate status"
 Command: show_navigation
 
-User: "Crate status"
-Command: show_navigation
-
 User: "Open navigation screen"
 Command: show_navigation
 

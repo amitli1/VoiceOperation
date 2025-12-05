@@ -10,8 +10,8 @@ class LLM_Handler:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.hf_model  = AutoModelForCausalLM.from_pretrained(
             model_name,
-            dtype="auto",
-            device_map="auto"
+            dtype      = "auto",
+            device_map = "auto"
         )
         self.hf_model.generation_config.bos_token_id = self.tokenizer.bos_token_id
         self.hf_model.generation_config.eos_token_id = self.tokenizer.eos_token_id
@@ -21,6 +21,7 @@ class LLM_Handler:
         self.model = outlines.models.Transformers(self.hf_model, self.tokenizer)
 
         with open("nlp/system_prompt.txt", "r", encoding="utf-8") as f:
+        #with open("nlp/system_no_examples.txt", "r", encoding="utf-8") as f:
             self.system_prompt = f.read()
 
         with open("nlp/json_schema.txt", "r", encoding="utf-8") as f:
