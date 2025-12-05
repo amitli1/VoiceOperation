@@ -39,7 +39,7 @@ class LLM_Handler:
         # Build prompt using Qwen chat template
         prompt = self.tokenizer.apply_chat_template(
             messages,
-            tokenize              = False,
+            tokenize              = False, # return chat template (string)
             add_generation_prompt = True,
             enable_thinking       = False,
             temperature           = 0.0
