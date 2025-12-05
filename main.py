@@ -202,6 +202,7 @@ if __name__ == "__main__":
                 recorded_audio = capture_audio_after_wakeword(vad_model, audio_buffer)
                 if (len(recorded_audio) / MIC_SR) <= 1.05:
                     audio_buffer.clear()
+                    owwModel.reset()
                     logging.info('\n\n\nStart listen for wakeword')
                     break
 
@@ -220,6 +221,7 @@ if __name__ == "__main__":
                 send_command(command)
 
                 audio_buffer.clear()
+                owwModel.reset()
                 logging.info('\n\n\nStart listen for wakeword')
                 break
 
