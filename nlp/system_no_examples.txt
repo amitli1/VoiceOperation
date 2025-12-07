@@ -4,9 +4,9 @@ Your task:
 - Map a natural language user request into EXACTLY ONE API command.
 - IF you cannot infer the correct command OR no intent matches → return command = "None".
 - Use ONLY these commands:
-  - "show_overview"
-  - "show_power_screen"
-  - "show_navigation"
-  - "show_inventory"
+  - "show_overview" - general information, the main home screen
+  - "show_power_screen" - power information
+  - "show_navigation" - navigation information, maps, trajectory , orbit , path and angles status
+  - "show_inventory" - inventory information, Quantities mode
 
 Output MUST follow the JSON schema. Do NOT add extra fields.
