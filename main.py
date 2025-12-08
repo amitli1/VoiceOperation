@@ -4,6 +4,7 @@ from silero_vad          import load_silero_vad, get_speech_timestamps
 from scipy.io.wavfile    import write
 from datetime            import datetime
 import numpy             as np
+import sounddevice       as sd
 import logging
 import torch
 import os
@@ -103,59 +104,15 @@ def capture_audio_after_wakeword(vad_model, last_audios, silence_threshold   = 1
     logging.info(f"[Timing] Audio capturing took {elapsed_time:.2f} seconds. [Audio len: {audio_len:.2F} sec]")
     return full_audio
 
-#
-# def get_speech_status(vad_model, audio_chunk, sample_rate=app_settings.audio.vad.sample_rate):
-#     audio_chunk = audio_chunk.astype(np.float32) / 32768.0
-#     speech_prob = vad_model(torch.from_numpy(audio_chunk), sample_rate).item()
-#     return speech_prob > app_settings.audio.vad.vad_threshold
-#
-# def source_capture_audio_after_wakeword(last_audios):
-#         recorded_audio = []
-#         for audio_history in last_audios:
-#             recorded_audio.append(audio_history)
-#         silence_duration = 0
-#         silence_threshold = 0.4
-#         grace_period = 0.8
-#         grace_time_elapsed = 0.0
-#         speech_detected = False
-#
-#         logging.info("[***] Capturing speech... (online process)")
-#         start_time = time.time()
-#
-#         while True:
-#             try:
-#                 mic_audio = np.frombuffer(
-#                     mic_stream.read(app_settings.audio.vad.vad_chunk, exception_on_overflow=False),
-#                     dtype=np.int16
-#                 )
-#             except IOError:
-#                 logging.error("Error reading from audio stream.")
-#                 break
-#             recorded_audio.append(mic_audio)
-#
-#             if not speech_detected:
-#                 if get_speech_status(mic_audio):
-#                     speech_detected = True
-#                     logging.info(f"[pid = {os.getpid()}] Speech detected. Now monitoring for silence.")
-#                 else:
-#                     grace_time_elapsed += app_settings.audio.vad.vad_chunk / app_settings.audio.vad.sample_rate
-#                     if grace_time_elapsed >= grace_period:
-#                         logging.info("No speech detected during grace period. Stopping capture.")
-#                         break
-#             else:
-#                 if not self.get_speech_status(mic_audio):
-#                     silence_duration += app_settings.audio.vad.vad_chunk / app_settings.audio.vad.sample_rate
-#                     if silence_duration >= silence_threshold:
-#                         logging.info("Silence detected, stopping capture.")
-#                         break
-#                 else:
-#                     silence_duration = 0
-#
-#         elapsed_time = time.time() - start_time
-#         logging.info(f"[***] Audio capturing took {elapsed_time:.2f} seconds.")
-#         full_audio = np.concatenate(recorded_audio).astype(np.float32)
-#         return full_audio
+def play_text(text_to_user):
 
+    response     = requests.post(f"http://{get_running_ip()}:8002/synthesize/", json={"text": text_to_user})
+    data         = response.json()
+    sample_rate  = data["sample_rate"]
+    audios       = [np.array(audio, dtype=np.float32) for audio in data["audio"]]
+    full_audio   = np.concatenate(audios)
+
+    sd.play(full_audio, samplerate=sample_rate, blocking=True)
 
 
 def send_command(user_command):
@@ -217,8 +174,18 @@ if __name__ == "__main__":
                 logging.info(f'Text: {text}')
 
                 command = llm_model.run_llm(text)
+                command = command['command']
                 logging.info(f'Command: {command}')
-                send_command(command)
+
+                if command != "None":
+                    # --- TTS
+                    text_to_user = command.replace("_", " ")
+                    play_text(text_to_user)
+
+                    # Send
+                    send_command(command)
+                else:
+                    play_text("Please say again")
 
                 audio_buffer.clear()
                 owwModel.reset()

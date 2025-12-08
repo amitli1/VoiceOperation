@@ -14,6 +14,7 @@ babel==2.17.0
 blis==1.3.3
 catalogue==2.0.10
 certifi==2025.11.12
+cffi==2.0.0
 charset-normalizer==3.4.4
 click==8.3.1
 cloudpathlib==0.23.0
@@ -28,6 +29,7 @@ cymem==2.0.13
 datasets==4.4.1
 dill==0.4.0
 diskcache==5.6.3
+distro==1.9.0
 dlinfo==2.0.0
 docopt==0.6.2
 en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl#sha256=1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85
@@ -51,6 +53,7 @@ interegular==0.3.3
 iso3166==2.1.1
 isodate==0.7.2
 Jinja2==3.1.6
+jiter==0.12.0
 joblib==1.5.2
 jsonpath-ng==1.7.0
 jsonschema==4.25.1
@@ -82,6 +85,7 @@ nvidia-nccl-cu12==2.21.5
 nvidia-nvjitlink-cu12==12.9.86
 nvidia-nvtx-cu12==12.1.105
 onnxruntime==1.23.2
+openai==2.7.1
 openwakeword==0.6.0
 outlines==0.2.3
 outlines_core==0.1.26
@@ -97,6 +101,7 @@ psutil==7.1.3
 pyaml==25.7.0
 pyarrow==22.0.0
 PyAudio==0.2.14
+pycparser==2.23
 pydantic==2.12.5
 pydantic_core==2.41.5
 pydub==0.25.1
@@ -119,6 +124,8 @@ shellingham==1.5.4
 silero-vad==5.1.2
 six==1.17.0
 smart_open==7.5.0
+sniffio==1.3.1
+sounddevice==0.5.3
 spacy==3.8.11
 spacy-curated-transformers==0.3.1
 spacy-legacy==3.0.12
