@@ -1,6 +1,7 @@
 from nlp.LLM_Handler     import LLM_Handler
 from collections         import deque
 from silero_vad          import load_silero_vad, get_speech_timestamps
+from fastapi             import FastAPI, Request
 from scipy.io.wavfile    import write
 from datetime            import datetime
 import numpy             as np
@@ -13,7 +14,8 @@ import pyaudio
 import time
 import requests
 import json
-
+import uvicorn
+import threading
 
 
 
@@ -68,7 +70,6 @@ def get_running_ip():
     else:
         return "127.0.0.1"
 
-
 def capture_audio_after_wakeword(vad_model, last_audios, silence_threshold   = 1.0):
 
     recorded_audio      = []
@@ -114,12 +115,21 @@ def play_text(text_to_user):
 
     sd.play(full_audio, samplerate=sample_rate, blocking=True)
 
-
 def send_command(user_command):
     command  = f'http://localhost:8080/{user_command}'
     #response = requests.post(command, json={})
     #logging.info(f"Command status code: {response.status_code}")
     #logging.info(f"Response body      : {response.text}")
+
+app = FastAPI()
+
+@app.post("/message")
+async def message_endpoint(data: dict):
+    logging.info(f"Received: {data}")
+    return {"status": "ok"}
+
+def run_server():
+    uvicorn.run(app, host="0.0.0.0", port=8053)
 
 if __name__ == "__main__":
     logging.info('Start')
@@ -145,6 +155,9 @@ if __name__ == "__main__":
                             rate              = MIC_SR,
                             input             = True,
                             frames_per_buffer = CHUNK)
+
+    server_thread = threading.Thread(target=run_server, daemon=True)
+    server_thread.start()
 
     logging.info('\n\n\nStart listen for wakeword')
     file_num = 0
@@ -188,7 +201,7 @@ if __name__ == "__main__":
                     play_text("Please say again")
 
                 audio_buffer.clear()
-                owwModel.reset()
+                owwModel    .reset()
                 logging.info('\n\n\nStart listen for wakeword')
                 break
 
