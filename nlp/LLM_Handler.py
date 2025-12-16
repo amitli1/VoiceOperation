@@ -6,9 +6,9 @@ import logging
 
 class LLM_Handler:
 
-    def __init__(self):
+    def __init__(self, model_name='Qwen/Qwen/Qwen3-0.6B-FP8'):
         #model_name      = "Qwen/Qwen2.5-0.5B"
-        model_name     = "Qwen/Qwen3-0.6B"
+        #model_name     = "Qwen/Qwen3-0.6B"
         #model_name = "Qwen/Qwen3-1.7B"
         logging.info(f'Load: {model_name}')
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
