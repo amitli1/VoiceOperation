@@ -10,6 +10,7 @@
 8.  Total GPU             = ~6800 GB (faster-whisper+tts+qwen3-1.7B)
 9.  Total GPU             = ~4200 GB (faster-whisper+tts+Qwen2.5-0.5B)
 10. Total GPU             = ~4266 GB (faster-whisper+tts+Qwen3-0.6B-FP8)
+11. Total GPU             = ~4254 GB (faster-whisper-medium+tts+Qwen3-0.6B-FP8)
 
 ## 🧪 Qwen/Qwen3-1.7B/0.6B:
 1. prompt: 32K
