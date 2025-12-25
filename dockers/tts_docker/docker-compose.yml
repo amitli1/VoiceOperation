@@ -9,10 +9,20 @@ services:
     image: tts-service
     container_name: tts-service-container
     volumes:
-      - /mnt/nvme/models/kokoro_model:/models/kokoro_model
+      - /home/amitli/repo/VoiceOperation/models/tts:/models/tts
     environment:
       - PULSE_SERVER=unix:/tmp/pulse/native
       - PULSE_COOKIE=/tmp/pulse/cookie
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     devices:
       - /dev/snd
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
     #restart: unless-stopped

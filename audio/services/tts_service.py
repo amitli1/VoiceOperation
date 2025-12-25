@@ -5,23 +5,27 @@ import numpy as np
 from kokoro import KPipeline
 import uvicorn
 import os
+import torch
+import logging
 
 def in_docker():
  return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")
 
-app = FastAPI()
+app    = FastAPI()
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 # Load the TTS model once
 if in_docker():
-    print(f"Start loading kokoro model")
+    logging.info(f"Start loading kokoro model (in docker)")
     kokoro_path = r'/models/kokoro_model'
     pipeline = KPipeline(lang_code='a',
-                         model=f"/models/kokoro_model/kokoro-v1_0.pth")
-    print(f"\tloaded")
-
-
+                         model=r"/models/tts/kokoro-v1_0.pth",
+                         )
+    logging.info(f"\tloaded")
 else:
-    pipeline = KPipeline(lang_code='a')
+    logging.info('Start loading kokoro model (not docker)')
+    pipeline = KPipeline(lang_code='a', device='cuda')
 SAMPLE_RATE = 24000
 
 class TTSRequest(BaseModel):
@@ -41,4 +45,5 @@ async def synthesize_tts(request: TTSRequest):
         return {"error": str(e)}
 
 if __name__ == "__main__":
+    logging.info("CUDA: {}".format(torch.cuda.is_available()))
     uvicorn.run(app, host="0.0.0.0", port=8002)
