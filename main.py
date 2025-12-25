@@ -132,11 +132,12 @@ def run_server():
     uvicorn.run(app, host="0.0.0.0", port=8053)
 
 if __name__ == "__main__":
+
     logging.info('Start')
     create_output_folder()
     #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
     logging.info(f'Cuda: {torch.cuda.is_available()}')
-    llm_model = LLM_Handler(model_name='Qwen/Qwen3-0.6B-FP8')
+    llm_model = LLM_Handler()
 
     owwModel = openwakeword.Model(
         wakeword_models                = ["hey_jarvis"],

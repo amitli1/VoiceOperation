@@ -6,7 +6,7 @@ import logging
 
 class LLM_Handler:
 
-    def __init__(self, model_name='Qwen/Qwen/Qwen3-0.6B-FP8'):
+    def __init__(self, model_name='Qwen/Qwen3-0.6B'):
         #model_name      = "Qwen/Qwen2.5-0.5B"
         #model_name     = "Qwen/Qwen3-0.6B"
         #model_name = "Qwen/Qwen3-1.7B"
