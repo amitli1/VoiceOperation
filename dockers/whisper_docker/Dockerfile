@@ -13,13 +13,12 @@ RUN python3 -m pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir fastapi
 RUN pip install --no-cache-dir uvicorn
 RUN pip install --no-cache-dir python-multipart
+RUN pip install --no-cache-dir faster-whisper
 
 
 ENV HF_HOME=/root/.cache/huggingface
 ENV TRANSFORMERS_CACHE=/root/.cache/huggingface/transformers
 RUN mkdir -p /root/.cache/huggingface/transformers
-
-WORKDIR /app
 
 WORKDIR /app
 

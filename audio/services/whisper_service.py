@@ -5,36 +5,56 @@ from faster_whisper import WhisperModel
 import numpy as np
 import time
 import math
+import torch
+import logging
+import os
+import glob
 
 import uvicorn
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from app_config.settings import app_settings
-app = FastAPI()
+
+app    = FastAPI()
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+logger.info(f"CUDA: {torch.cuda.is_available()}")
 
 # Load model once at startup
 NUM_BEAMS  = app_settings.audio.stt.num_beams
 language   = app_settings.audio.language
 model_size = app_settings.audio.stt.model_size
 
+logging.info(f"Run with: {model_size}, NUM_BEAMS: {NUM_BEAMS}, language: {language}")
+
+
+def in_docker():
+ return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")
 
 # Run on GPU with FP16
-print(f"Run with: {model_size}, NUM_BEAMS: {NUM_BEAMS}, language: {language}")
+# if in_docker():
+#
+#     model_path = r"/app/models/whisper/faster-whisper-large-v3-turbo"
+#     model_path = "large-v3-turbo"
+#     model = WhisperModel(model_path, device="cuda", compute_type="float16")
+# else:
 model = WhisperModel(model_size, device="cuda", compute_type="float16")
-#model = WhisperModel(rf'/root/.cache/huggingface/models--openai--whisper-large-v3-turbo', device="cuda", compute_type="float16")
+
+
 
 
 @app.post("/transcribe/")
 async def transcribe_api(file: UploadFile = File(None), request: Request = None):
     start = time.perf_counter()
     if file:
-        print("Received file to transcribe")
+        logging.info("Received file to transcribe")
         temp_path = f"{file.filename}"
         with open(temp_path, "wb") as f:
             f.write(await file.read())
         audio_input = temp_path
 
     elif request:
-        print("Received audio request to transcribe")
+        logging.info("Received audio request to transcribe")
         data             = await request.json()
         audio_input_data = data.get("audio_input")
 
@@ -57,14 +77,14 @@ async def transcribe_api(file: UploadFile = File(None), request: Request = None)
         except StopIteration:
             return {"error": "No speech detected."}
 
-        print(f"[{first_segment.start:.2f}s -> {first_segment.end:.2f}s] {first_segment.text}")
+        logging.info(f"[{first_segment.start:.2f}s -> {first_segment.end:.2f}s] {first_segment.text}")
 
         transcription      = first_segment.text + " "
         log_probs          = [first_segment.avg_logprob]
         compression_ratios = [first_segment.compression_ratio]
 
         for segment in segments:
-            print(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}")
+            logging.info(f"[{segment.start:.2f}s -> {segment.end:.2f}s] {segment.text}")
             transcription += segment.text + " "
             log_probs.append(segment.avg_logprob)
             compression_ratios.append(segment.compression_ratio)
@@ -80,7 +100,7 @@ async def transcribe_api(file: UploadFile = File(None), request: Request = None)
         }
 
         end = time.perf_counter()
-        print(f"Elapsed time: {end - start:.3f} seconds")
+        logging.info(f"Elapsed time: {end - start:.3f} seconds")
         
         return result
 
