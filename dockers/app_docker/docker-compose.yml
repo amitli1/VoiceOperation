@@ -10,6 +10,7 @@ services:
     container_name: c2-voice-control
     volumes:
       - /home/amitli/repo/VoiceOperation/models/llm:/models:ro
+      - /home/amitli/repo/VoiceOperation/models/openWakeWord:/usr/local/lib/python3.10/dist-packages/openwakeword/resources/models
     environment:
       - PULSE_SERVER=unix:/tmp/pulse/native
       - PULSE_COOKIE=/tmp/pulse/cookie
@@ -24,5 +25,5 @@ services:
           devices:
             - driver: nvidia
               count: all
-              capabilities: [ gpu ]
+              capabilities: [gpu]
     #restart: unless-stopped
