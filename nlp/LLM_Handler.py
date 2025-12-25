@@ -2,6 +2,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import outlines
 import torch
 import logging
+import os
 
 
 class LLM_Handler:
@@ -10,6 +11,8 @@ class LLM_Handler:
         #model_name      = "Qwen/Qwen2.5-0.5B"
         #model_name     = "Qwen/Qwen3-0.6B"
         #model_name = "Qwen/Qwen3-1.7B"
+        if self.in_docker():
+            model_name = "/models/Qwen/Qwen3-0.6B"
         logging.info(f'Load: {model_name}')
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.hf_model  = AutoModelForCausalLM.from_pretrained(
@@ -33,6 +36,8 @@ class LLM_Handler:
 
         self.json_gen = outlines.generate.json(self.model, self.json_schema)
 
+    def in_docker(self):
+        return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")
 
     def run_llm(self, user_text):
         messages = [
