@@ -1,5 +1,5 @@
 ## build:
-     docker compose up --build
+     docker compose-up --build 
 
 ## run:
     docker comppose up

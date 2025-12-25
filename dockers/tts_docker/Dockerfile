@@ -1,9 +1,3 @@
-#FROM python:3.11-slim
-#FROM pytorch/pytorch:2.5.1-cuda11.8-cudnn9-runtime
-#FROM pytorch/pytorch:2.5.1-cuda12.2-cudnn9-runtime
-#FROM nvidia/cuda:12.2.1-cudnn8-runtime-ubuntu22.04
-#FROM nvidia/cuda:12.2.2-cudnn8-devel-ubuntu22.04
-
 FROM pytorch/pytorch:2.9.1-cuda12.6-cudnn9-runtime
 
 # Install Python3 and pip
