@@ -2,7 +2,9 @@ version: "3.9"
 
 services:
   voice_app:
-    build: .
+    build:
+      context: ../..
+      dockerfile: ../app_docker/Dockerfile
     container_name: voice_app
     network_mode: "host" # Required for microphone/speaker access
     environment:
@@ -10,5 +12,5 @@ services:
     devices:
       - "/dev/snd:/dev/snd" # Access to ALSA sound devices
     volumes:
-      - ./VoiceOperation:/app/VoiceOperation
+       - ../../VoiceOperation:/app/VoiceOperation
     restart: unless-stopped
