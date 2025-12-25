@@ -15,6 +15,8 @@ app    = FastAPI()
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+logging.info("CUDA: {}".format(torch.cuda.is_available()))
+
 # Load the TTS model once
 if in_docker():
     logging.info(f"Start loading kokoro model (in docker)")
