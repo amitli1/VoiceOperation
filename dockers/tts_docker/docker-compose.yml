@@ -7,6 +7,7 @@ services:
     ports:
       - "8002:8002"
     image: tts-service
+    runtime: nvidia
     container_name: tts-service-container
     volumes:
       - /home/amitli/repo/VoiceOperation/models/tts:/models/tts
@@ -17,12 +18,3 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     devices:
       - /dev/snd
-
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [ gpu ]
-    #restart: unless-stopped

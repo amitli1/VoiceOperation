@@ -7,6 +7,7 @@ services:
     ports:
       - "8002:8002"
     image: c2-voice-control
+    runtime: nvidia
     container_name: c2-voice-control
     volumes:
       - /home/amitli/repo/VoiceOperation/models/llm:/models:ro
@@ -19,11 +20,5 @@ services:
     devices:
       - /dev/snd
 
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+
     #restart: unless-stopped

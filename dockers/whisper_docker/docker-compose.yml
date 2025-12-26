@@ -7,6 +7,7 @@ services:
     ports:
       - "8013:8013"
     image: whisper-service
+    runtime: nvidia
     container_name: whisper-service-container
     volumes:
         - /home/amitli/repo/VoiceOperation/models:/models
@@ -20,11 +21,4 @@ services:
     devices:
       - /dev/snd
 
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [ gpu ]
     #restart: unless-stopped
