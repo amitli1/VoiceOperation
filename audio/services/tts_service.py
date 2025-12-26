@@ -7,6 +7,7 @@ import uvicorn
 import os
 import torch
 import logging
+import glob
 
 def in_docker():
  return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")
@@ -20,9 +21,9 @@ logging.info("CUDA: {}".format(torch.cuda.is_available()))
 # Load the TTS model once
 if in_docker():
     logging.info(f"Start loading kokoro model (in docker)")
-    kokoro_path = r'/models/kokoro_model'
     pipeline = KPipeline(lang_code='a',
-                         model=r"/models/tts/kokoro-v1_0.pth",
+                         model='/models/tts/kokoro-v1_0.pth',
+                         device="cuda"
                          )
     logging.info(f"\tloaded")
 else:
