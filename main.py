@@ -131,9 +131,52 @@ async def message_endpoint(data: dict):
 def run_server():
     uvicorn.run(app, host="0.0.0.0", port=8053)
 
+
+def get_support_sample_rate():
+    p = pyaudio.PyAudio()
+
+    for i in range(p.get_device_count()):
+        dev = p.get_device_info_by_index(i)
+        if dev['maxInputChannels'] > 0:  # is input device
+            logging.info(f"Device {i}: {dev['name']}")
+            # Try common sample rates
+            for rate in [8000, 16000, 22050, 44100, 48000, 96000]:
+                try:
+                    if p.is_format_supported(rate,
+                                             input_device=dev['index'],
+                                             input_channels=int(dev['maxInputChannels']),
+                                             input_format=pyaudio.paInt16):
+                        logging.info(f"  Supported rate: {rate} Hz")
+                except ValueError:
+                    pass
+
+    p.terminate()
+
+def get_input_device():
+    p = pyaudio.PyAudio()
+
+    for i in range(p.get_device_count()):
+        dev = p.get_device_info_by_index(i)
+        if dev['maxInputChannels'] > 0:  # is input device
+            logging.info(f"Device {i}: {dev['name']}")
+            # Try common sample rates
+            try:
+                if p.is_format_supported(16000,
+                                         input_device=dev['index'],
+                                         input_channels=int(dev['maxInputChannels']),
+                                         input_format=pyaudio.paInt16):
+                    p.terminate()
+                    return i
+            except ValueError:
+                pass
+
+    p.terminate()
+
 if __name__ == "__main__":
 
     logging.info('Start')
+    #get_support_sample_rate()
+    input_device = get_input_device()
     create_output_folder()
     #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
     logging.info(f'Cuda: {torch.cuda.is_available()}')
@@ -151,11 +194,12 @@ if __name__ == "__main__":
     CHANNELS     = 1
     MIC_SR       = 16000
     audio        = pyaudio.PyAudio()
-    mic_stream = audio.open(format            = FORMAT,
-                            channels          = CHANNELS,
-                            rate              = MIC_SR,
-                            input             = True,
-                            frames_per_buffer = CHUNK)
+    mic_stream = audio.open(format             = FORMAT,
+                            channels           = CHANNELS,
+                            rate               = MIC_SR,
+                            input              = True,
+                            input_device_index = input_device,
+                            frames_per_buffer  = CHUNK)
 
     server_thread = threading.Thread(target=run_server, daemon=True)
     server_thread.start()
