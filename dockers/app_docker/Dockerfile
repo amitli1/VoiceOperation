@@ -5,6 +5,10 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     portaudio19-dev \
+    alsa-utils \
+    pulseaudio \
+    pulseaudio-utils \
+    libpulse-dev \
     && apt-get clean
 
 #
