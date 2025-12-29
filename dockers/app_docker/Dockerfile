@@ -7,6 +7,12 @@ RUN apt-get update && apt-get install -y \
     portaudio19-dev \
     && apt-get clean
 
+#
+#RUN apt-get update && apt-get install -y \
+#    libpulse0 \
+#    pulseaudio-utils
+
+
 # Upgrade pip first
 RUN python3 -m pip install --upgrade pip setuptools wheel
 

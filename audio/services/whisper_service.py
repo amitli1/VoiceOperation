@@ -38,6 +38,11 @@ def in_docker():
 #     model_path = "large-v3-turbo"
 #     model = WhisperModel(model_path, device="cuda", compute_type="float16")
 # else:
+
+if in_docker():
+    model_size = '/app/models/faster-whisper-large-v3-turbo/models--mobiuslabsgmbh--faster-whisper-large-v3-turbo/snapshots/0a363e9161cbc7ed1431c9597a8ceaf0c4f78fcf/'
+
+logger.info(f'Load: {model_size}')
 model = WhisperModel(model_size, device="cuda", compute_type="float16")
 
 
