@@ -17,8 +17,6 @@ import json
 import uvicorn
 import threading
 
-
-
 def get_timestamp_string():
     return datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
 
@@ -107,13 +105,16 @@ def capture_audio_after_wakeword(vad_model, last_audios, silence_threshold   = 1
 
 def play_text(text_to_user):
 
-    response     = requests.post(f"http://{get_running_ip()}:8002/synthesize/", json={"text": text_to_user})
-    data         = response.json()
-    sample_rate  = data["sample_rate"]
-    audios       = [np.array(audio, dtype=np.float32) for audio in data["audio"]]
-    full_audio   = np.concatenate(audios)
+    try:
+        response     = requests.post(f"http://{get_running_ip()}:8002/synthesize/", json={"text": text_to_user})
+        data         = response.json()
+        sample_rate  = data["sample_rate"]
+        audios       = [np.array(audio, dtype=np.float32) for audio in data["audio"]]
+        full_audio   = np.concatenate(audios)
 
-    sd.play(full_audio, samplerate=sample_rate, blocking=True)
+        sd.play(full_audio, samplerate=sample_rate, blocking=True)
+    except Exception as e:
+        logging.error('Cant connect to TTS service')
 
 def send_command(user_command):
     command  = f'http://localhost:8080/{user_command}'

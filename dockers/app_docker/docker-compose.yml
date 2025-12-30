@@ -6,8 +6,7 @@ services:
       dockerfile: dockers/app_docker/Dockerfile
     image: c2-voice-control
     container_name: c2-voice-control
-    ports:
-      - "8002:8002"
+
     runtime: nvidia
     tty: true
     devices:

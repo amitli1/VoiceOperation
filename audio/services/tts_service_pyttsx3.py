@@ -9,8 +9,6 @@ import torch
 import logging
 import glob
 
-from torch.xpu import device
-
 
 def in_docker():
  return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")

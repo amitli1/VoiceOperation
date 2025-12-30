@@ -33,6 +33,7 @@ RUN pip install --no-cache-dir PyAudio==0.2.14
 RUN pip install --no-cache-dir accelerate==1.12.0
 RUN pip install --no-cache-dir datasets==4.4.1
 RUN pip install --no-cache-dir speexdsp-ns==0.1.2
+RUN pip install --no-cache-dir pyttsx3
 
 #COPY models/faster-whisper-large-v3-turbo /.cache/huggingface/hub
 #COPY models/llm/Qwen/Qwen3-0.6B/ \

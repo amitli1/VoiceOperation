@@ -25,6 +25,11 @@ NUM_BEAMS  = app_settings.audio.stt.num_beams
 language   = app_settings.audio.language
 model_size = app_settings.audio.stt.model_size
 
+
+
+logging.info(f"CUDA available:  {torch.cuda.is_available()}")
+logging.info(f"CUDA version  : {torch.version.cuda}")
+logging.info(f"cuDNN version :{torch.backends.cudnn.version()}")
 logging.info(f"Run with: {model_size}, NUM_BEAMS: {NUM_BEAMS}, language: {language}")
 
 

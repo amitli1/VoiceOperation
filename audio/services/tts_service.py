@@ -22,7 +22,7 @@ logging.info("CUDA: {}".format(torch.cuda.is_available()))
 if in_docker():
     logging.info(f"Start loading kokoro model (in docker)")
     pipeline = KPipeline(lang_code='a',
-                         model='/models/tts/kokoro-v1_0.pth',
+                         #model='/models/tts/kokoro-v1_0.pth',
                          device="cuda"
                          )
     logging.info(f"\tloaded")

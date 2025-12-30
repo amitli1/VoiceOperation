@@ -25,5 +25,20 @@ COPY audio ./audio
 #COPY dockers/tts_docker/en_us_cmuartic_jets_cpu.addon .
 COPY dockers/tts_docker/en_us_cmartic_jets_gpu.addon .
 
-#CMD ["python3", "audio/services/tts_service.py"]
-CMD ["python3", "audio/services/tts_service_balacoon.py"]
+
+# 🔥 Pre-download Kokoro model at build time
+ENV HF_HOME=/models/hf
+ENV TRANSFORMERS_CACHE=/models/hf
+ENV HUGGINGFACE_HUB_CACHE=/models/hf
+
+
+RUN python3 - <<'EOF'
+from kokoro import KPipeline
+
+print("Downloading Kokoro model...")
+KPipeline(lang_code="en-us", device="cpu")
+print("Model downloaded")
+EOF
+
+CMD ["python3", "audio/services/tts_service.py"]
+#CMD ["python3", "audio/services/tts_service_balacoon.py"]
