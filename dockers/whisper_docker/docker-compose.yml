@@ -4,11 +4,12 @@ services:
     build:
       context: ../../
       dockerfile: dockers/whisper_docker/Dockerfile
-    ports:
-      - "8013:8013"
+
     image: whisper-service
     runtime: nvidia
     container_name: whisper-service-container
+    ports:
+      - "8013:8013"
     volumes:
         - /home/amitli/repo/VoiceOperation/models:/app/models
     environment:
@@ -20,5 +21,7 @@ services:
       #- TRANSFORMERS_CACHE=/root/.cache/huggingface/transformers
     devices:
       - /dev/snd
+
+
 
     #restart: unless-stopped
