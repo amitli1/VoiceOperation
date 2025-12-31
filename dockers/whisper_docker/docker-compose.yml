@@ -21,7 +21,12 @@ services:
       #- TRANSFORMERS_CACHE=/root/.cache/huggingface/transformers
     devices:
       - /dev/snd
+    networks:
+      - app_net
 
+networks:
+  app_net:
+    external: true
 
 
     #restart: unless-stopped

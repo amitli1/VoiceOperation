@@ -27,6 +27,12 @@ services:
       - PULSE_COOKIE=/run/user/1000/pulse/cookie
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    external: true
 
 
 

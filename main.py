@@ -65,7 +65,8 @@ def in_docker():
 def get_running_ip():
     if in_docker():
         #return "host.docker.internal"
-        return "172.17.0.1"
+        #return "172.17.0.1"
+        return "whisper"
     else:
         return "127.0.0.1"
 
@@ -229,9 +230,10 @@ if __name__ == "__main__":
                 if isinstance(recorded_audio, np.ndarray):
                     recorded_audio = recorded_audio.tolist()
                 logging.info(f'Call whisper service to transcribe: {len(recorded_audio)} samples')
-                response = requests.post(f"http://{get_running_ip()}:8013/transcribe/",json={"audio_input": recorded_audio})
-                result   = response.json()
-                text     = result['transcription']
+                whisper_url = f"http://{get_running_ip()}:8013/transcribe/"
+                response    = requests.post(whisper_url,json={"audio_input": recorded_audio})
+                result      = response.json()
+                text        = result['transcription']
                 logging.info(f'Text: {text}')
 
                 command = llm_model.run_llm(text)

@@ -12,3 +12,6 @@
 
 ## Notes:
     sudo apt-get install -y nvidia-docker2
+
+## Create network:
+    docker network create app_net
