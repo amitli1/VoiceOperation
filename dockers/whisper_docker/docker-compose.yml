@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  tts:
+  whisper:
     build:
       context: ../../
       dockerfile: dockers/whisper_docker/Dockerfile
