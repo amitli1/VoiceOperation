@@ -40,5 +40,5 @@ KPipeline(lang_code="en-us", device="cpu")
 print("Model downloaded")
 EOF
 
-CMD ["python3", "audio/services/tts_service.py"]
-#CMD ["python3", "audio/services/tts_service_balacoon.py"]
+#CMD ["python3", "audio/services/tts_service.py"]
+CMD ["python3", "audio/services/tts_service_balacoon.py"]

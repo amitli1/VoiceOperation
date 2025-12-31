@@ -6,6 +6,7 @@ from scipy.io.wavfile    import write
 from datetime            import datetime
 import numpy             as np
 import sounddevice       as sd
+import soundfile         as sf
 import logging
 import torch
 import os
@@ -16,6 +17,7 @@ import requests
 import json
 import uvicorn
 import threading
+import librosa
 
 def get_timestamp_string():
     return datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
@@ -118,6 +120,13 @@ def play_text(text_to_user):
     except Exception as e:
         logging.error('Cant connect to TTS service')
 
+def play_wav_file(wav_file_name):
+    logging.info(f'Play: {wav_file_name}')
+    data, fs       = sf.read(wav_file_name, dtype='float32')
+    data           = np.expand_dims(data, axis=1)
+    sd.play(data, fs)
+    sd.wait()
+
 def send_command(user_command):
     command  = f'http://localhost:8080/{user_command}'
     #response = requests.post(command, json={})
@@ -209,6 +218,7 @@ if __name__ == "__main__":
 
     logging.info('\n\n\nStart listen for wakeword')
     file_num = 0
+
     while True:
         mic_audio = np.frombuffer(mic_stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
         audio_buffer.append(mic_audio)
@@ -241,14 +251,16 @@ if __name__ == "__main__":
                 logging.info(f'Command: {command}')
 
                 if command != "None":
-                    # --- TTS
-                    text_to_user = command.replace("_", " ")
-                    play_text(text_to_user)
-
-                    # Send
-                    send_command(command)
+                    # # --- TTS
+                    # text_to_user = command.replace("_", " ")
+                    # play_text(text_to_user)
+                    #
+                    # # Send
+                    # send_command(command)
+                    play_wav_file(f"audio_files/{command}.wav")
                 else:
-                    play_text("Please say again")
+                    #play_text("Please say again")
+                    play_wav_file("audio_files/Please_say_again.wav")
 
                 audio_buffer.clear()
                 owwModel    .reset()
