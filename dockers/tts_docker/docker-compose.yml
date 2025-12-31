@@ -18,3 +18,9 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     devices:
       - /dev/snd
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    external: true
