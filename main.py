@@ -66,9 +66,7 @@ def in_docker():
 
 def get_running_ip():
     if in_docker():
-        #return "host.docker.internal"
-        #return "172.17.0.1"
-        return "whisper"
+        return "host.docker.internal"
     else:
         return "127.0.0.1"
 
@@ -120,11 +118,11 @@ def play_text(text_to_user):
     except Exception as e:
         logging.error('Cant connect to TTS service')
 
-def play_wav_file(wav_file_name):
+def play_wav_file(wav_file_name, output_device):
     logging.info(f'Play: {wav_file_name}')
     data, fs       = sf.read(wav_file_name, dtype='float32')
     data           = np.expand_dims(data, axis=1)
-    sd.play(data, fs)
+    sd.play(data, fs, device=output_device)
     sd.wait()
 
 def send_command(user_command):
@@ -184,11 +182,34 @@ def get_input_device():
 
     p.terminate()
 
+
+
+def get_output_device():
+    p = pyaudio.PyAudio()
+
+    for i in range(p.get_device_count()):
+        dev = p.get_device_info_by_index(i)
+        if dev['maxOutputChannels'] > 0:  # is input device
+            logging.info(f"Device {i}: {dev['name']}")
+            # Try common sample rates
+            try:
+                if p.is_format_supported(48000,
+                                         input_device=dev['index'],
+                                         input_channels=int(dev['maxInputChannels']),
+                                         input_format=pyaudio.paInt16):
+                    p.terminate()
+                    return i
+            except ValueError:
+                pass
+
+    p.terminate()
+
 if __name__ == "__main__":
 
     logging.info('Start')
     #get_support_sample_rate()
     input_device = get_input_device()
+    output_device = get_output_device()
     create_output_folder()
     #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
     logging.info(f'Cuda: {torch.cuda.is_available()}')
@@ -213,8 +234,9 @@ if __name__ == "__main__":
                             input_device_index = input_device,
                             frames_per_buffer  = CHUNK)
 
-    server_thread = threading.Thread(target=run_server, daemon=True)
-    server_thread.start()
+    logging.warn('comment code - open restapi to get data from user')
+    # server_thread = threading.Thread(target=run_server, daemon=True)
+    # server_thread.start()
 
     logging.info('\n\n\nStart listen for wakeword')
     file_num = 0
@@ -239,7 +261,6 @@ if __name__ == "__main__":
 
                 if isinstance(recorded_audio, np.ndarray):
                     recorded_audio = recorded_audio.tolist()
-                logging.info(f'Call whisper service to transcribe: {len(recorded_audio)} samples')
                 whisper_url = f"http://{get_running_ip()}:8013/transcribe/"
                 response    = requests.post(whisper_url,json={"audio_input": recorded_audio})
                 result      = response.json()
@@ -257,10 +278,10 @@ if __name__ == "__main__":
                     #
                     # # Send
                     # send_command(command)
-                    play_wav_file(f"audio_files/{command}.wav")
+                    play_wav_file(f"audio_files/{command}.wav", output_device)
                 else:
                     #play_text("Please say again")
-                    play_wav_file("audio_files/Please_say_again.wav")
+                    play_wav_file("audio_files/Please_say_again.wav", output_device)
 
                 audio_buffer.clear()
                 owwModel    .reset()
