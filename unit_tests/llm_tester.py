@@ -44,4 +44,4 @@ if __name__ == "__main__":
     total = total + run_test(user_text="show Crate status"          , gt_command="show_navigation")
     total = total + run_test(user_text="Interceptors status"        , gt_command="show_inventory")
 
-    print(f"Model: {model_name}, Total pass: {total}")
+    print(f"\t --- Model: {model_name}, Total pass: {total}|10 ---")
