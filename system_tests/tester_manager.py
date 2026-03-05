@@ -110,4 +110,11 @@ class TesterManager:
             else:
                 icon = "🛑"
 
-        logging.info(f'\tCurrent test results: {icon}')
+        text        = f'\tCurrent test results: {icon}'
+        width       = 70
+        border      = '*' * width
+        inner_width = width - 2  # space for side asterisks
+        centered_text = f'* {text.center(inner_width - 2)} *'
+        logging.info(border)
+        logging.info(centered_text)
+        logging.info(border)
