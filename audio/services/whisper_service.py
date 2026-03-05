@@ -79,6 +79,7 @@ async def transcribe_api(file: UploadFile = File(None), request: Request = None)
 
     # === Actual transcription logic starts here ===
     try:
+        logging.info('Starting transcription')
         segments, info = model.transcribe(audio_input, beam_size=NUM_BEAMS, language=language)
         
         # Get first segment separately if needed

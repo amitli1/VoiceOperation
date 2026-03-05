@@ -33,3 +33,10 @@
         docker compose up
     2. Go to app_docker folder and run 
         docker compose up
+
+
+## Known errors:
+1. Whisper:
+   1.1 Unable to load any of {libcudnn_ops.so.9.1.0, libcudnn_ops.so.9.1, libcudnn_ops.so.9
+   1.2 Check torch.cuda.is_available()
+   1.3 pip install --upgrade faster-whisper ctranslate2
