@@ -19,6 +19,7 @@ import uvicorn
 import threading
 import librosa
 from app_config.settings import app_settings
+from system_tests.tester_manager import TesterManager
 
 def get_timestamp_string():
     return datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
@@ -208,6 +209,10 @@ def get_output_device():
 if __name__ == "__main__":
 
     logging.info('Start')
+
+    if app_settings.test.run_in_test_mode :
+        TesterManager()
+
     #get_support_sample_rate()
     input_device  = get_input_device()
     output_device = get_output_device()
@@ -248,6 +253,9 @@ if __name__ == "__main__":
 
         if app_settings.test.run_in_test_mode is True:
             wake_word_detected = True
+            recorded_audio     = TesterManager().run_next_test_step()
+            if recorded_audio is None:
+                break
         else:
             mic_audio = np.frombuffer(mic_stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
             audio_buffer.append(mic_audio)
@@ -292,7 +300,9 @@ if __name__ == "__main__":
                 #play_text("Please say again")
                 play_wav_file("audio_files/Please_say_again.wav", output_device)
 
-            if app_settings.test.run_in_test_mode is False:
+            if app_settings.test.run_in_test_mode is True:
+                TesterManager().check_last_results(command)
+            else:
                 audio_buffer.clear()
                 owwModel    .reset()
                 logging.info('\n\n\nStart listen for wakeword')
