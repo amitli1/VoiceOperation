@@ -18,6 +18,7 @@ import json
 import uvicorn
 import threading
 import librosa
+from app_config.settings import app_settings
 
 def get_timestamp_string():
     return datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
@@ -208,7 +209,7 @@ if __name__ == "__main__":
 
     logging.info('Start')
     #get_support_sample_rate()
-    input_device = get_input_device()
+    input_device  = get_input_device()
     output_device = get_output_device()
     create_output_folder()
     #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
@@ -222,10 +223,10 @@ if __name__ == "__main__":
     )
     vad_model    = load_silero_vad()
     audio_buffer = deque(maxlen=10)
-    CHUNK        = 4096
+    CHUNK        = app_settings.audio.wakeword.chunk
     FORMAT       = pyaudio.paInt16
-    CHANNELS     = 1
-    MIC_SR       = 16000
+    CHANNELS     = app_settings.audio.wakeword.channels
+    MIC_SR       = app_settings.audio.wakeword.sample_rate
     audio        = pyaudio.PyAudio()
     mic_stream = audio.open(format             = FORMAT,
                             channels           = CHANNELS,
@@ -234,7 +235,7 @@ if __name__ == "__main__":
                             input_device_index = input_device,
                             frames_per_buffer  = CHUNK)
 
-    logging.warn('comment code - open restapi to get data from user')
+    logging.warning('comment code - open restapi to get data from user')
     # server_thread = threading.Thread(target=run_server, daemon=True)
     # server_thread.start()
 
@@ -242,51 +243,60 @@ if __name__ == "__main__":
     file_num = 0
 
     while True:
-        mic_audio = np.frombuffer(mic_stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
-        audio_buffer.append(mic_audio)
-        prediction = owwModel.predict(mic_audio)
 
+        wake_word_detected = False
 
-        for mdl in prediction.keys():
-            if prediction[mdl] >= 0.3:
-                recorded_audio = capture_audio_after_wakeword(vad_model, audio_buffer)
-                if (len(recorded_audio) / MIC_SR) <= 1.05:
-                    audio_buffer.clear()
-                    owwModel.reset()
-                    logging.info('\n\n\nStart listen for wakeword')
-                    break
+        if app_settings.test.run_in_test_mode is True:
+            wake_word_detected = True
+        else:
+            mic_audio = np.frombuffer(mic_stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
+            audio_buffer.append(mic_audio)
+            prediction = owwModel.predict(mic_audio)
 
-                file_num = file_num + 1
-                write_samples(f"out_{file_num}", recorded_audio, samplerate=16000)
+            for mdl in prediction.keys():
+                if prediction[mdl] >= 0.3:
+                    recorded_audio = capture_audio_after_wakeword(vad_model, audio_buffer)
+                    if (len(recorded_audio) / MIC_SR) <= 1.05:
+                        audio_buffer.clear()
+                        owwModel.reset()
+                        logging.info(f'Wake word detected with: {prediction[mdl]}% but audio is too short: {(len(recorded_audio) / MIC_SR)} seconds')
+                        break
+                    wake_word_detected = True
+                    logging.info(f'Wake word detected with: {prediction[mdl]}%')
 
-                if isinstance(recorded_audio, np.ndarray):
-                    recorded_audio = recorded_audio.tolist()
-                whisper_url = f"http://{get_running_ip()}:8013/transcribe/"
-                response    = requests.post(whisper_url,json={"audio_input": recorded_audio})
-                result      = response.json()
-                text        = result['transcription']
-                logging.info(f'Text: {text}')
+        if wake_word_detected:
+            file_num = file_num + 1
+            write_samples(f"out_{file_num}", recorded_audio, samplerate=16000)
 
-                command = llm_model.run_llm(text)
-                command = command['command']
-                logging.info(f'Command: {command}')
+            if isinstance(recorded_audio, np.ndarray):
+                recorded_audio = recorded_audio.tolist()
+            whisper_url = f"http://{get_running_ip()}:8013/transcribe/"
+            response    = requests.post(whisper_url,json={"audio_input": recorded_audio})
+            result      = response.json()
+            text        = result['transcription']
+            logging.info(f'Text: {text}')
 
-                if command != "None":
-                    # # --- TTS
-                    # text_to_user = command.replace("_", " ")
-                    # play_text(text_to_user)
-                    #
-                    # # Send
-                    # send_command(command)
-                    play_wav_file(f"audio_files/{command}.wav", output_device)
-                else:
-                    #play_text("Please say again")
-                    play_wav_file("audio_files/Please_say_again.wav", output_device)
+            command = llm_model.run_llm(text)
+            command = command['command']
+            logging.info(f'Command: {command}')
 
+            if command != "None":
+                # # --- TTS
+                # text_to_user = command.replace("_", " ")
+                # play_text(text_to_user)
+                #
+                # # Send
+                # send_command(command)
+                play_wav_file(f"audio_files/{command}.wav", output_device)
+            else:
+                #play_text("Please say again")
+                play_wav_file("audio_files/Please_say_again.wav", output_device)
+
+            if app_settings.test.run_in_test_mode is False:
                 audio_buffer.clear()
                 owwModel    .reset()
                 logging.info('\n\n\nStart listen for wakeword')
-                break
+
 
 
 
