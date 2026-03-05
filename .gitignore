@@ -1,0 +1,6 @@
+*.lock
+logs/*
+output/*
+*.pth
+*.addon
+models/*
