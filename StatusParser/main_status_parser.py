@@ -102,8 +102,8 @@ def load_status_msg():
             },
             "insPower": 0,
             "gfePower": 0,
-            "lcuPower": 0,
-            "mcuPower": 0
+            "lcuPower": 9,
+            "mcuPower": 2
         }
     ]
 
@@ -154,6 +154,7 @@ if __name__ == '__main__':
 
     user_q     = "What is the current voltage level of the battery ?"
     user_q     = "Is the battery in charging mode ?"
+    user_q     = "What is the LCU and MCU battery power ?"
     result     = ask_question(user_q, status_msg, schema)
     print(f"Q: {user_q}")
     print(f"A: {result}")
