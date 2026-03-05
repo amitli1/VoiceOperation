@@ -1,0 +1,57 @@
+{
+  "title": "PowerSourceDataRaw",
+  "x-stoplight": {
+    "id": "dzszlovp17d6n"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "xml": {
+    "name": "order"
+  },
+  "properties": {
+    "acPower": {
+      "$ref": "./ac-power-enum.json"
+    },
+    "vehiclePower": {
+      "$ref": "./vehicle-power-enum.json"
+    },
+    "version": {
+      "type": "string",
+      "description": "json schema version",
+      "pattern": "^[1-9]{1,}\\.[0-9]{1,}$",
+      "default": "2.0"
+    },
+    "defaultTopicName": {
+      "type": "string",
+      "example": "PowerSourceDataRaw",
+      "default": "PowerSourceDataRaw",
+      "description": "Default topic name for event driven messaging between BE services"
+    },
+    "batteryStatus": {
+      "$ref": "./battery-status.json"
+    },
+    "insPower": {
+      "$ref": "./power-state-enum.json"
+    },
+    "gfePower": {
+      "$ref": "./power-state-enum.json"
+    },
+    "lcuPower": {
+      "$ref": "./power-state-enum.json"
+    },
+    "mcuPower": {
+      "$ref": "./power-state-enum.json"
+    }
+  },
+  "required": [
+    "acPower",
+    "vehiclePower",
+    "version",
+    "defaultTopicName",
+    "batteryStatus",
+    "insPower",
+    "gfePower",
+    "lcuPower",
+    "mcuPower"
+  ]
+}

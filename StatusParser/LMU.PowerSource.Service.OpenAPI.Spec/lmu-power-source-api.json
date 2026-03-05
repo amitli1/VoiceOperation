@@ -1,0 +1,123 @@
+{
+  "openapi": "3.0.3",
+  "x-stoplight": {
+    "id": "e2f88c7e9baf2"
+  },
+  "info": {
+    "title": "LMU.PowerSource.Service - OpenAPI 3.0",
+    "description": "This is Power source service OpenApi, power source service is on of many LMU's services",
+    "termsOfService": "https://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Raf",
+      "url": "None"
+    },
+    "version": "3.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "https://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "None"
+    }
+  ],
+  "paths": {
+    "/power-source-data": {
+      "get": {
+        "summary": "retrieves most updated power source data",
+        "description": "this api gets you the most updated power source data",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "./models/power-source-data.json"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Invalid status value",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "powersourceAuth": [
+              "write:powerData",
+              "read:powerData"
+            ]
+          }
+        ],
+        "operationId": "get-power-source-data",
+        "tags": [
+          "Power source data"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "powersourceAuth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://example.com/oauth/authorize",
+            "scopes": {
+              "write:power_data": "modify power source data",
+              "read:power_data": "read power source data"
+            }
+          }
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Power source data"
+    }
+  ]
+}

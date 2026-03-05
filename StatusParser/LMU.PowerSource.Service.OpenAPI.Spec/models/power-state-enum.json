@@ -1,0 +1,16 @@
+{
+  "type": "integer",
+  "x-stoplight": {
+    "id": "40ea57d48ff77"
+  },
+  "description": "Switch enum",
+  "enum": [
+    0,
+    1
+  ],
+  "x-enumNames": [
+    "Off",
+    "On"
+  ],
+  "default": 0
+}

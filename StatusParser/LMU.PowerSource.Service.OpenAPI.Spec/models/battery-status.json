@@ -1,0 +1,25 @@
+{
+  "title": "BatteryStatus",
+  "x-stoplight": {
+    "id": "d770d6336acc5"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "xml": {
+    "name": "category"
+  },
+  "properties": {
+    "charging": {
+      "$ref": "./charging-enum.json"
+    },
+    "voltageLevel": {
+      "type": "string",
+      "pattern": "^(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)$",
+      "example": 10
+    }
+  },
+  "required": [
+    "charging",
+    "voltageLevel"
+  ]
+}

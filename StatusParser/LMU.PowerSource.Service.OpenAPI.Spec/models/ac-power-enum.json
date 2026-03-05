@@ -1,0 +1,18 @@
+{
+  "title": "AcPowerEnum",
+  "x-stoplight": {
+    "id": "jw1ogl5lijo3b"
+  },
+  "type": "integer",
+  "description": "AC power enum that indicates if ac power is on or off\n| Enum Value | Enum Label    |\n| ---------- | ----------    |\n|     0      | off           |\n|     1      | on            |\n",
+  "additionalProperties": false,
+  "enum": [
+    0,
+    1
+  ],
+  "x-EnumNames": [
+    "off",
+    "on"
+  ],
+  "default": 0
+}

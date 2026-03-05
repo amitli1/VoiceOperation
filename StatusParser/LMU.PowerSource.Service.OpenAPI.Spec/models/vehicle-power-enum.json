@@ -1,0 +1,20 @@
+{
+  "title": "VehiclePowerEnum",
+  "x-stoplight": {
+    "id": "00bb7eaa48e7d"
+  },
+  "type": "integer",
+  "description": "Vehicle power type enum \n\n| Enum Value | Enum Label    |\n| ---------- | ----------    |\n|     0      | VehiclePower  |\n|     1      | AcPower       |\n|     2      | Batteries     |",
+  "additionalProperties": false,
+  "enum": [
+    0,
+    1,
+    2
+  ],
+  "x-EnumNames": [
+    "VehiclePower",
+    "AcPower",
+    "Batteries"
+  ],
+  "default": 0
+}

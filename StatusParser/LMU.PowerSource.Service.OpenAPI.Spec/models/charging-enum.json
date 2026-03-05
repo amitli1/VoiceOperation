@@ -1,0 +1,18 @@
+{
+  "title": "ChargingEnum",
+  "x-stoplight": {
+    "id": "qp6qz6zfoqyff"
+  },
+  "type": "integer",
+  "description": "Charging enum\n| Enum Value | Enum Label    |\n| ---------- | ----------    |\n|     0      | off           |\n|     1      | on            |\n",
+  "additionalProperties": false,
+  "enum": [
+    0,
+    1
+  ],
+  "x-EnumNames": [
+    "off",
+    "on"
+  ],
+  "default": 0
+}
