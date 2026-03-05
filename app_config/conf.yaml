@@ -12,10 +12,10 @@ audio:
     sample_rate: 16000
   wakeword:
     channels: 1
-    chunk: 1280
+    chunk: 4096
     sample_rate: 16000
 
 
 test:
   run_in_test_mode: false
-  use_case: 'None'
+  use_case: 'general' # general
