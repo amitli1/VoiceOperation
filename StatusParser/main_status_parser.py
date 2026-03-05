@@ -120,28 +120,27 @@ def ask_question(question, status_data, schema_data):
         dtype             = torch.float16,
         trust_remote_code = True
     )
-    prompt = f"""You are a system assistant. 
-                 Use the following JSON data and Schema to answer the user's question.
-                
-                Data:
-                {json.dumps(status_data, indent=2)}
-                
-                Schema Context:
-                {json.dumps(schema_data, indent=2)}  
-                
-                Question: {question}
-                Answer:"""
+    prompt = f"""Task: Answer the question using ONLY the data provided. 
+    Constraint: Provide a direct answer. No explanations, no intro, no context.
+
+    Data: {json.dumps(status_data, indent=2)}
+    Schema: {json.dumps(schema_data, indent=2)}
+
+    Question: {question}
+    Answer:"""
 
     inputs  = tokenizer(prompt, return_tensors="pt").to(model.device)
     outputs = model.generate(
         **inputs,
-        max_new_tokens        = 1000,
+        max_new_tokens        = 100,
         do_sample             = False,
         pad_token_id          = tokenizer.eos_token_id
     )
 
     answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    return answer.split("Answer:")[-1].strip()
+    answer = answer.split("Answer:")[-1].strip()
+    answer = answer.split('\n')[0] # ignore new line (probably repteition)
+    return answer
 
 
 if __name__ == '__main__':
@@ -151,10 +150,10 @@ if __name__ == '__main__':
     schema     = load_full_schema()
     schema     = get_relevant_schema_part(schema)
     schema     = simplify_schema(json.loads(schema))
-
     status_msg = load_status_msg()
 
-    user_q     = "What is the current voltage level of the battery?"
+    user_q     = "What is the current voltage level of the battery ?"
+    user_q     = "Is the battery in charging mode ?"
     result     = ask_question(user_q, status_msg, schema)
     print(f"Q: {user_q}")
     print(f"A: {result}")
