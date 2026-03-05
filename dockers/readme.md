@@ -12,6 +12,7 @@
         1.2 Create venv ('python -m venv myVenv')
         1.3 Activate venv (myVenv/bin/activate) 
         1.4 pip install -U huggingface_hub
+        1.5 Note: I tested it with huggingface_hub==1.5.0
 
     2. Building whisper_docker:
         2.1 You need to download whisper model, so run the following command from terminal:
