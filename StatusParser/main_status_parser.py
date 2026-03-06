@@ -113,16 +113,17 @@ def load_status_msg():
     return power_source_status_msg
 
 
-def ask_llm(model_name, question, status_data, schema_data):
-
-
-    tokenizer  = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-    model      = AutoModelForCausalLM.from_pretrained(
+def create_llm_model(model_name):
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    model     = AutoModelForCausalLM.from_pretrained(
         model_name,
         device_map        = "auto",
         dtype             = torch.float16,
         trust_remote_code = True
     )
+    return tokenizer, model
+
+def ask_llm(tokenizer, model, question, status_data, schema_data):
 
     examples = """
     Example 1:
@@ -181,6 +182,7 @@ def get_schema():
 def main():
     # MODEL_NAME = "Qwen/Qwen3-0.6B"
     MODEL_NAME = "Qwen/Qwen3-1.7B"
+    tokenizer, model = create_llm_model(MODEL_NAME)
 
     schema = get_schema()
     status_msg = load_status_msg()
@@ -190,7 +192,7 @@ def main():
     user_q = "What is the LCU and MCU battery power ?"
     user_q = "What is LMU power version ?"
 
-    result = ask_llm(MODEL_NAME, user_q, status_msg, schema)
+    result = ask_llm(tokenizer, model, user_q, status_msg, schema)
     print(f"Q: {user_q}")
     print(f"A: {result}")
 
@@ -199,9 +201,8 @@ def run_unit_tests():
 
     # MODEL_NAME = "Qwen/Qwen3-0.6B"
     MODEL_NAME = "Qwen/Qwen3-1.7B"
-    schema = get_schema()
-    statusTesterManager = StatusTesterManager()
-    statusTesterManager.run_tests(MODEL_NAME, schema)
+    statusTesterManager = StatusTesterManager(MODEL_NAME)
+    statusTesterManager.run_tests()
 
 if __name__ == '__main__':
 

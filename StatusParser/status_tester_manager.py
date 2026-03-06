@@ -1,9 +1,10 @@
-from StatusParser.main_status_parser import ask_llm
+from StatusParser.main_status_parser import ask_llm, create_llm_model, get_schema
 
 
 class StatusTesterManager:
-    def __init__(self):
-        pass
+    def __init__(self, model_name):
+        self.tokenizer, self.model = create_llm_model(model_name)
+        self.schema                = get_schema()
 
     def create_power_status_message(self):
         power_source_status_msg = [
@@ -46,30 +47,30 @@ class StatusTesterManager:
 
 
 
-    def run_tests(self, model_name, schema):
+    def run_tests(self):
 
         power_source_status_msg = self.create_power_status_message()
 
         user_q, gt_answer       = self.create_test_version()
-        results                 = ask_llm(model_name, user_q, power_source_status_msg, schema)
+        results                 = ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg, self.schema)
         print(f"Q: {user_q}")
         print(f"\tAnswer : {results}")
         print(f"\tGT     : {gt_answer}")
 
         user_q, gt_answer = self.create_test_charging()
-        results           = ask_llm(model_name, user_q, power_source_status_msg, schema)
+        results           = ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg, self.schema)
         print(f"Q: {user_q}")
         print(f"\tAnswer : {results}")
         print(f"\tGT     : {gt_answer}")
 
         user_q, gt_answer = self.create_test_lcu_and_mcu_power()
-        results = ask_llm(model_name, user_q, power_source_status_msg, schema)
+        results = ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg, self.schema)
         print(f"Q: {user_q}")
         print(f"\tAnswer : {results}")
         print(f"\tGT     : {gt_answer}")
 
         user_q, gt_answer = self.create_test_battery_voltage()
-        results = ask_llm(model_name, user_q, power_source_status_msg, schema)
+        results = ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg, self.schema)
         print(f"Q: {user_q}")
         print(f"\tAnswer : {results}")
         print(f"\tGT     : {gt_answer}")
