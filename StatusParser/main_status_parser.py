@@ -1,10 +1,13 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers                       import AutoTokenizer, AutoModelForCausalLM
+from pathlib                            import Path
+
 import logging
 import json
 import os
 import torch
 import jsonref
-from pathlib import Path
+
+
 
 
 def get_relevant_schema_part(full_schema):
@@ -110,51 +113,99 @@ def load_status_msg():
     return power_source_status_msg
 
 
-def ask_question(question, status_data, schema_data):
+def ask_llm(model_name, question, status_data, schema_data):
 
-    MODEL_NAME = "Qwen/Qwen3-1.7B"
-    tokenizer  = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+
+    tokenizer  = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     model      = AutoModelForCausalLM.from_pretrained(
-        MODEL_NAME,
+        model_name,
         device_map        = "auto",
         dtype             = torch.float16,
         trust_remote_code = True
     )
+
+    examples = """
+    Example 1:
+    Data: [{"batteryStatus": {"charging": 1}}]
+    Question: Is the battery in charging mode ?
+    Answer: Yes
+
+    Example 2:
+    Data: [{"batteryStatus": {"charging": 0}}]
+    Question: Is the battery in charging mode ?
+    Answer: No
+    
+   Example 3:
+    Data: [{"batteryStatus": {"voltageLevel": 75}}]
+    Question: what is the battery voltage level ?
+    Answer: 75
+
+    ---
+    """
+
     prompt = f"""Task: Answer the question using ONLY the data provided. 
     Constraint: Provide a direct answer. No explanations, no intro, no context.
 
     Data: {json.dumps(status_data, indent=2)}
     Schema: {json.dumps(schema_data, indent=2)}
-
+    
     Question: {question}
     Answer:"""
 
-    inputs  = tokenizer(prompt, return_tensors="pt").to(model.device)
-    outputs = model.generate(
-        **inputs,
-        max_new_tokens        = 100,
-        do_sample             = False,
-        pad_token_id          = tokenizer.eos_token_id
+
+    prompt    = examples + prompt
+    input_ids = tokenizer.encode(prompt, return_tensors="pt").to(model.device)
+    outputs  = model.generate(
+        input_ids,
+        max_new_tokens = 100,
+        do_sample      = False,
+        tokenizer      = tokenizer,
+        stop_strings   = ["\n", "Answer:", "Question:", "Explanation:"],
+        pad_token_id   = tokenizer.pad_token_id
     )
 
-    answer = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    answer = answer.split("Answer:")[-1].strip()
-    answer = answer.split('\n')[0] # ignore new line (probably repteition)
-    return answer
 
+    generated_tokens    = outputs[0][input_ids.shape[-1]:] # get answer (after prompt)
+    full_generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True)
+    final_answer        = full_generated_text.strip().split('\n')[0].strip()
+    return final_answer
+
+
+def get_schema():
+    schema     = load_full_schema()
+    schema     = get_relevant_schema_part(schema)
+    schema     = simplify_schema(json.loads(schema))
+    return schema
+
+
+def main():
+    # MODEL_NAME = "Qwen/Qwen3-0.6B"
+    MODEL_NAME = "Qwen/Qwen3-1.7B"
+
+    schema = get_schema()
+    status_msg = load_status_msg()
+
+    user_q = "What is the current voltage level of the battery ?"
+    user_q = "Is the battery in charging mode ?"
+    user_q = "What is the LCU and MCU battery power ?"
+    user_q = "What is LMU power version ?"
+
+    result = ask_llm(MODEL_NAME, user_q, status_msg, schema)
+    print(f"Q: {user_q}")
+    print(f"A: {result}")
+
+def run_unit_tests():
+    from StatusParser.status_tester_manager import StatusTesterManager
+
+    # MODEL_NAME = "Qwen/Qwen3-0.6B"
+    MODEL_NAME = "Qwen/Qwen3-1.7B"
+    schema = get_schema()
+    statusTesterManager = StatusTesterManager()
+    statusTesterManager.run_tests(MODEL_NAME, schema)
 
 if __name__ == '__main__':
 
     print(f"CUDA: {torch.cuda.is_available()}")
 
-    schema     = load_full_schema()
-    schema     = get_relevant_schema_part(schema)
-    schema     = simplify_schema(json.loads(schema))
-    status_msg = load_status_msg()
-
-    user_q     = "What is the current voltage level of the battery ?"
-    user_q     = "Is the battery in charging mode ?"
-    user_q     = "What is the LCU and MCU battery power ?"
-    result     = ask_question(user_q, status_msg, schema)
-    print(f"Q: {user_q}")
-    print(f"A: {result}")
+    #main()
+    run_unit_tests()
