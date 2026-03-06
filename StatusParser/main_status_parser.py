@@ -1,13 +1,15 @@
-from transformers                       import AutoTokenizer, AutoModelForCausalLM
-from pathlib                            import Path
-
+from transformers     import AutoTokenizer, AutoModelForCausalLM
+from pathlib          import Path
+import numpy          as np
+import sounddevice    as sd
 import logging
 import json
 import os
 import torch
 import jsonref
+import requests
 
-
+from utils import play_text
 
 
 def get_relevant_schema_part(full_schema):
@@ -179,22 +181,26 @@ def get_schema():
     return schema
 
 
+
 def main():
     # MODEL_NAME = "Qwen/Qwen3-0.6B"
-    MODEL_NAME = "Qwen/Qwen3-1.7B"
+    MODEL_NAME       = "Qwen/Qwen3-1.7B"
     tokenizer, model = create_llm_model(MODEL_NAME)
 
-    schema = get_schema()
+    schema     = get_schema()
     status_msg = load_status_msg()
 
     user_q = "What is the current voltage level of the battery ?"
     user_q = "Is the battery in charging mode ?"
     user_q = "What is the LCU and MCU battery power ?"
-    user_q = "What is LMU power version ?"
+    #user_q = "What is LMU power version ?"
 
     result = ask_llm(tokenizer, model, user_q, status_msg, schema)
     print(f"Q: {user_q}")
     print(f"A: {result}")
+
+    play_text(user_q)
+    play_text(result)
 
 def run_unit_tests():
     from StatusParser.status_tester_manager import StatusTesterManager
@@ -208,5 +214,5 @@ if __name__ == '__main__':
 
     print(f"CUDA: {torch.cuda.is_available()}")
 
-    #main()
-    run_unit_tests()
+    main()
+    #run_unit_tests()

@@ -5,8 +5,6 @@ from fastapi             import FastAPI, Request
 from scipy.io.wavfile    import write
 from datetime            import datetime
 import numpy             as np
-import sounddevice       as sd
-import soundfile         as sf
 import logging
 import torch
 import os
@@ -63,14 +61,6 @@ def write_samples(fname, audio, samplerate=16000):
     logging.info(f"\t[{(end_time-start_time):.2f} ms] Write audio (after wakeword) to: {output_folder}")
 
 
-def in_docker():
- return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")
-
-def get_running_ip():
-    if in_docker():
-        return "host.docker.internal"
-    else:
-        return "127.0.0.1"
 
 def capture_audio_after_wakeword(vad_model, last_audios, silence_threshold   = 1.0):
 
@@ -107,25 +97,6 @@ def capture_audio_after_wakeword(vad_model, last_audios, silence_threshold   = 1
     logging.info(f"[Timing] Audio capturing took {elapsed_time:.2f} seconds. [Audio len: {audio_len:.2F} sec]")
     return full_audio
 
-def play_text(text_to_user):
-
-    try:
-        response     = requests.post(f"http://{get_running_ip()}:8002/synthesize/", json={"text": text_to_user})
-        data         = response.json()
-        sample_rate  = data["sample_rate"]
-        audios       = [np.array(audio, dtype=np.float32) for audio in data["audio"]]
-        full_audio   = np.concatenate(audios)
-
-        sd.play(full_audio, samplerate=sample_rate, blocking=True)
-    except Exception as e:
-        logging.error('Cant connect to TTS service')
-
-def play_wav_file(wav_file_name, output_device):
-    logging.info(f'Play: {wav_file_name}')
-    data, fs       = sf.read(wav_file_name, dtype='float32')
-    data           = np.expand_dims(data, axis=1)
-    sd.play(data, fs, device=output_device)
-    sd.wait()
 
 def send_command(user_command):
     command  = f'http://localhost:8080/{user_command}'
