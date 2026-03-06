@@ -18,4 +18,4 @@ audio:
 
 test:
   run_in_test_mode: false
-  use_case: 'general' # general
+  use_case: 'power_status' # general, power_status

@@ -16,7 +16,8 @@ def create_wav(text, file_name):
 
 if __name__ == "__main__":
 
-    create_wav("Where am I located", "Where_am_I_located.wav")
-    create_wav("Open power screen", "Open_power_screen.wav")
-    create_wav("Go back to home screen", "Go_back_to_home_screen.wav")
-    create_wav("Missiles status", "Missiles_status.wav")
+    # create_wav("Where am I located", "Where_am_I_located.wav")
+    # create_wav("Open power screen", "Open_power_screen.wav")
+    # create_wav("Go back to home screen", "Go_back_to_home_screen.wav")
+    # create_wav("Missiles status", "Missiles_status.wav")
+    create_wav("Is the battery in charging mode ?", "Is_the_battery_in_charging_mode.wav")

@@ -36,6 +36,9 @@ class LLM_Handler:
 
         self.json_gen = outlines.generate.json(self.model, self.json_schema)
 
+    def get_llm_model(self):
+        return self.tokenizer, self.hf_model
+
     def in_docker(self):
         return os.path.exists("/.dockerenv") or os.path.exists("/run/.dockerenv")
 
@@ -49,7 +52,6 @@ class LLM_Handler:
         prompt = self.tokenizer.apply_chat_template(
             messages,
             tokenize              = False, # return chat template (string)
-            add_generation_prompt = True,
             enable_thinking       = False,
             temperature           = 0.0
 

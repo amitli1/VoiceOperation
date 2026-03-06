@@ -1,3 +1,4 @@
+from StatusParser.power_status_manger import PowerStatusManger
 from nlp.LLM_Handler     import LLM_Handler
 from collections         import deque
 from silero_vad          import load_silero_vad, get_speech_timestamps
@@ -18,6 +19,8 @@ import threading
 import librosa
 from app_config.settings import app_settings
 from system_tests.tester_manager import TesterManager
+from utils import get_input_device, get_output_device, get_running_ip, play_wav_file
+
 
 def get_timestamp_string():
     return datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
@@ -115,67 +118,6 @@ def run_server():
     uvicorn.run(app, host="0.0.0.0", port=8053)
 
 
-def get_support_sample_rate():
-    p = pyaudio.PyAudio()
-
-    for i in range(p.get_device_count()):
-        dev = p.get_device_info_by_index(i)
-        if dev['maxInputChannels'] > 0:  # is input device
-            logging.info(f"Device {i}: {dev['name']}")
-            # Try common sample rates
-            for rate in [8000, 16000, 22050, 44100, 48000, 96000]:
-                try:
-                    if p.is_format_supported(rate,
-                                             input_device=dev['index'],
-                                             input_channels=int(dev['maxInputChannels']),
-                                             input_format=pyaudio.paInt16):
-                        logging.info(f"  Supported rate: {rate} Hz")
-                except ValueError:
-                    pass
-
-    p.terminate()
-
-def get_input_device():
-    p = pyaudio.PyAudio()
-
-    for i in range(p.get_device_count()):
-        dev = p.get_device_info_by_index(i)
-        if dev['maxInputChannels'] > 0:  # is input device
-            logging.info(f"Device {i}: {dev['name']}")
-            # Try common sample rates
-            try:
-                if p.is_format_supported(16000,
-                                         input_device=dev['index'],
-                                         input_channels=int(dev['maxInputChannels']),
-                                         input_format=pyaudio.paInt16):
-                    p.terminate()
-                    return i
-            except ValueError:
-                pass
-
-    p.terminate()
-
-
-
-def get_output_device():
-    p = pyaudio.PyAudio()
-
-    for i in range(p.get_device_count()):
-        dev = p.get_device_info_by_index(i)
-        if dev['maxOutputChannels'] > 0:  # is input device
-            logging.info(f"Device {i}: {dev['name']}")
-            # Try common sample rates
-            try:
-                if p.is_format_supported(48000,
-                                         input_device=dev['index'],
-                                         input_channels=int(dev['maxInputChannels']),
-                                         input_format=pyaudio.paInt16):
-                    p.terminate()
-                    return i
-            except ValueError:
-                pass
-
-    p.terminate()
 
 if __name__ == "__main__":
 
@@ -190,7 +132,8 @@ if __name__ == "__main__":
     create_output_folder()
     #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
     logging.info(f'Cuda: {torch.cuda.is_available()}')
-    llm_model = LLM_Handler()
+    llm_model           = LLM_Handler()
+    power_status_manger = PowerStatusManger(*llm_model.get_llm_model()) # * -> unpack
 
     owwModel = openwakeword.Model(
         wakeword_models                = ["hey_jarvis"],
@@ -267,6 +210,10 @@ if __name__ == "__main__":
                 # # Send
                 # send_command(command)
                 play_wav_file(f"audio_files/{command}.wav", output_device)
+
+                if command == "show_power_screen":
+                    power_status_manger.handle_power_status(text)
+
             else:
                 #play_text("Please say again")
                 play_wav_file("audio_files/Please_say_again.wav", output_device)

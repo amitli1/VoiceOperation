@@ -54,9 +54,22 @@ class TesterManager:
     def run_next_test_step(self, curr_step_results=None):
 
         if app_settings.test.use_case == 'general':
-            #p = multiprocessing.Process(target=self._run_general_test, args=(curr_step_results,))
-            #p.start()
             return self._run_general_test(None)
+        elif app_settings.test.use_case == 'power_status':
+            return self._run_power_status_test(None)
+
+        return None
+
+    def _run_power_status_test(self, curr_step_results=None):
+        time.sleep(1)
+        self.test_step.value = self.test_step.value + 1
+        if self.test_step.value == 1:
+            self.log_step(f'Load: Is_the_battery_in_charging_mode.wav')
+            samples = self.load_file(rf'./system_tests/wav_commands/Is_the_battery_in_charging_mode.wav')
+            return samples
+        else:
+            self.log_step(f'Load: None')
+            return None
 
     def _run_general_test(self, curr_step_results=None):
         time.sleep(1)  # wait for other tasks to finish
@@ -88,27 +101,36 @@ class TesterManager:
 
     def check_last_results(self, command):
 
-        icon = ""
-        if self.test_step.value == 1:
-            if command == "show_overview":
-                icon = "✅"
-            else:
-                icon = "🛑"
-        elif self.test_step.value == 2:
-            if command == "show_inventory":
-                icon = "✅"
-            else:
-                icon = "🛑"
-        elif self.test_step.value == 3:
-            if command == "show_power_screen":
-                icon = "✅"
-            else:
-                icon = "🛑"
-        elif self.test_step.value == 4:
-            if command == "show_navigation":
-                icon = "✅"
-            else:
-                icon = "🛑"
+        if app_settings.test.use_case == 'general':
+            icon = ""
+            if self.test_step.value == 1:
+                if command == "show_overview":
+                    icon = "✅"
+                else:
+                    icon = "🛑"
+            elif self.test_step.value == 2:
+                if command == "show_inventory":
+                    icon = "✅"
+                else:
+                    icon = "🛑"
+            elif self.test_step.value == 3:
+                if command == "show_power_screen":
+                    icon = "✅"
+                else:
+                    icon = "🛑"
+            elif self.test_step.value == 4:
+                if command == "show_navigation":
+                    icon = "✅"
+                else:
+                    icon = "🛑"
+
+        elif app_settings.test.use_case == 'power_status':
+            icon = ""
+            if self.test_step.value == 1:
+                if command == "show_power_screen":
+                    icon = "✅"
+                else:
+                    icon = "🛑"
 
         text        = f'\tCurrent test results: {icon}'
         width       = 70
