@@ -16,7 +16,9 @@
 
     2. Building whisper_docker:
         2.1 You need to download whisper model, so run the following command from terminal:
-            2.1.1 huggingface-cli download mobiuslabsgmbh/faster-whisper-large-v3-turbo --cache-dir /home/amitli/repo/VoiceOperation/models/faster-whisper-large-v3-turbo
+            2.1.1 Download:
+               2.1.1.1 Linux: huggingface-cli download mobiuslabsgmbh/faster-whisper-large-v3-turbo --cache-dir /home/amitli/repo/VoiceOperation/models/faster-whisper-large-v3-turbo
+               2.1.1.2 Windows: hf download mobiuslabsgmbh/faster-whisper-large-v3-turbo --cache-dir /home/amitli/repo/VoiceOperation/models/faster-whisper-large-v3-turbo
             2.2.2 you can change '/home/amitli/repo/VoiceOperation/models/faster-whisper-large-v3-turbo' to other path)
         2.2 update docker-compose.yml (under whisper_docker folder) with the model folder (under 'volumes' section)
         2.3 Go to whisper_docker folder:
