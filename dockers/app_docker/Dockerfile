@@ -39,6 +39,8 @@ RUN pip install --no-cache-dir speexdsp-ns==0.1.2
 #RUN pip install --no-cache-dir pyttsx3
 RUN pip install --no-cache-dir soundfile
 RUN pip install --no-cache-dir librosa
+RUN pip install --no-cache-dir jsonref
+RUN pip install --no-cache-dir pydub
 
 #COPY models/faster-whisper-large-v3-turbo /.cache/huggingface/hub
 #COPY models/llm/Qwen/Qwen3-0.6B/ \
@@ -48,7 +50,10 @@ WORKDIR /app
 
 COPY audio_files ./audio_files
 COPY app_config ./app_config
+COPY StatusParser ./StatusParser
+COPY system_tests ./system_tests
 COPY nlp ./nlp
+COPY utils.py ./utils.py
 COPY main.py ./main.py
 
 CMD ["python3", "main.py"]

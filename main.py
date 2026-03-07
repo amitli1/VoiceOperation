@@ -20,6 +20,7 @@ import librosa
 from app_config.settings import app_settings
 from system_tests.tester_manager import TesterManager
 from utils import get_input_device, get_output_device, get_running_ip, play_wav_file
+from pydub import AudioSegment
 
 
 def get_timestamp_string():
@@ -118,6 +119,34 @@ def run_server():
     uvicorn.run(app, host="0.0.0.0", port=8053)
 
 
+def warmup():
+    try:
+        logging.info(f'Start TTS warmup')
+        response = requests.post(f"http://{get_running_ip()}:8002/synthesize/", json={"text": 'warmup TTS'})
+        data = response.json()
+        if response.status_code != 200:
+            logging.error(f'TTS warmup failed, status code {response.status_code}')
+        else:
+            logging.info(f'End TTS warmup')
+    except Exception as e:
+        logging.error(f'TTS warmup failed: {e}')
+
+
+    try:
+        logging.info('Start WHISPER warmup')
+        audio   = AudioSegment.from_wav(f"{os.getcwd()}/audio_files/Please_say_again.wav")
+        samples = np.array(audio.get_array_of_samples())
+        samples = samples / 32768.0
+        audio_input = samples.tolist()
+        response = requests.post(f"http://{get_running_ip()}:8013/transcribe/", json={"audio_input": audio_input})
+        if response.status_code != 200:
+            logging.error(f'Whisper warmup failed with status_code: {response.status_code != 200}')
+        else:
+            logging.info(f'End TTS warmup')
+    except Exception as e:
+        logging.error(f'Whisper warmup failed: {e}')
+
+
 
 if __name__ == "__main__":
 
@@ -134,6 +163,8 @@ if __name__ == "__main__":
     logging.info(f'Cuda: {torch.cuda.is_available()}')
     llm_model           = LLM_Handler()
     power_status_manger = PowerStatusManger(*llm_model.get_llm_model()) # * -> unpack
+
+    warmup()
 
     owwModel = openwakeword.Model(
         wakeword_models                = ["hey_jarvis"],
