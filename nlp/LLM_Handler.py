@@ -28,7 +28,7 @@ class LLM_Handler:
         self.model = outlines.models.Transformers(self.hf_model, self.tokenizer)
 
         #with open("nlp/system_prompt.txt", "r", encoding="utf-8") as f:
-        with open("nlp/system_no_examples.txt", "r", encoding="utf-8") as f:
+        with open("nlp/system_prompt_v2.txt", "r", encoding="utf-8") as f:
             self.system_prompt = f.read()
 
         with open("nlp/json_schema.txt", "r", encoding="utf-8") as f:
