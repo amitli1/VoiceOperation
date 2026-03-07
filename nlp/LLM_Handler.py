@@ -56,6 +56,7 @@ class LLM_Handler:
             temperature           = 0.0
 
         )
-
+        prompt_size = self.tokenizer.encode(prompt, return_tensors="pt").shape[1]
+        logging.info(f"Number of prompt tokens: {prompt_size}")
         result = self.json_gen(prompt)
         return result

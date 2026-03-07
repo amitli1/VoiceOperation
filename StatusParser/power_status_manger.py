@@ -53,8 +53,9 @@ class PowerStatusManger:
         Question: {question}
         Answer:"""
 
-        prompt = examples + prompt
+        prompt    = examples + prompt
         input_ids = tokenizer.encode(prompt, return_tensors="pt").to(model.device)
+        logging.info(f"Number of prompt tokens: {input_ids.shape[1]}" )
         outputs = model.generate(
             input_ids,
             max_new_tokens=100,
