@@ -9,8 +9,9 @@ services:
     image: tts-service
     runtime: nvidia
     container_name: tts-service-container
+    command: ["sh", "-c", "python3 audio/services/tts_service.py"]
     volumes:
-      - /home/amitli/repo/VoiceOperation/models/tts:/models/tts
+      - /home/amitli/repo/VoiceOperation/models/kokoro_model:/models/kokoro_model
     environment:
       - PULSE_SERVER=unix:/tmp/pulse/native
       - PULSE_COOKIE=/tmp/pulse/cookie
@@ -18,9 +19,4 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     devices:
       - /dev/snd
-    networks:
-      - app_net
 
-networks:
-  app_net:
-    external: true

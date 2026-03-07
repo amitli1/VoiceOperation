@@ -30,6 +30,19 @@
         3.2 Go to app_docker folder:
              docker compose up --build
 
+    4. Building tts_docker:
+        4.1 You need to download tts (Kokoro-82M) model, so run the following command from terminal:
+            2.1.1 Download:
+               2.1.1.1 Linux: huggingface-cli download hexgrad/Kokoro-82M --cache-dir /home/amitli/repo/VoiceOperation/models/kokoro_model
+               2.1.1.2 Windows: hf download hexgrad/Kokoro-82M --cache-dir /home/amitli/repo/VoiceOperation/models/kokoro_model
+            2.2.2 you can change '/home/amitli/repo/VoiceOperation/models/kokoro_model' to other path)
+        2.2 update docker-compose.yml (under tts_docker folder) with the model folder (under 'volumes' section)
+        2.3 Go to tts_docker folder:
+             docker compose up --build
+        2.4 Note: 
+            2.4.1 If working without internet - it takes about 3 minutes for the model to load.
+            2.4.2 Same situation when getting results for the first time
+
 ## Running:
     1. Go to whisper_docker folder and run 
         docker compose up
@@ -37,7 +50,18 @@
         docker compose up
 
 
-## Known errors:
+# Test dockers with CURL commands:
+   1. TTS:
+      ```bash
+         curl -X POST "http://127.0.0.1:8002/synthesize/"      -H "Content-Type: application/json"      -d '{"text": "Hello, how are you?", "voice": "en_us"}'
+      ```
+   2. Whisper:
+      ```bash
+        curl -F "file=@/home/amitli/repo/VoiceOperation/dockers/whisper_docker/common_voice_en_2925.wav" http://localhost:8013/transcribe/
+      ```
+
+
+## Known errors (&Fix):
 1. Whisper:
    1.1 Unable to load any of {libcudnn_ops.so.9.1.0, libcudnn_ops.so.9.1, libcudnn_ops.so.9
    1.2 Check torch.cuda.is_available()
