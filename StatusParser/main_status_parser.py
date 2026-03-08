@@ -75,7 +75,7 @@ def simplify_schema(schema):
 def load_full_schema():
 
 
-    main_json_path = rf'{os.getcwd()}/LMU.PowerSource.Service.OpenAPI.Spec/lmu-power-source-api.json'
+    main_json_path = rf'{os.getcwd()}/StatusParser/LMU.PowerSource.Service.OpenAPI.Spec/lmu-power-source-api.json'
     base_uri       = Path(main_json_path).parent.as_uri() + '/'
 
     try:
