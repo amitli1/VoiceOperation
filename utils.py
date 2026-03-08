@@ -32,7 +32,8 @@ def play_wav_file(wav_file_name, output_device):
     logging.info(f'Play: {wav_file_name}')
     data, fs       = sf.read(wav_file_name, dtype='float32')
     data           = np.expand_dims(data, axis=1)
-    sd.play(data, fs, device=output_device)
+    #sd.play(data, fs, device=output_device)
+    sd.play(data, fs)
     sd.wait()
 
 

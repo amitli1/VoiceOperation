@@ -21,7 +21,7 @@ class PowerStatusManger:
         result     = self.ask_llm(self.tokenizer, self.model, user_q, status_msg, self.schema)
         logging.info(f"Q: {user_q}")
         logging.info(f"A: {result}")
-        play_text(result)
+        play_text(f"I checked your question and the answer is {result}")
 
     def ask_llm(self, tokenizer, model, question, status_data, schema_data):
 
