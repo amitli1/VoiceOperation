@@ -9,6 +9,7 @@ import torch
 import jsonref
 import requests
 
+from StatusParser.power_status_manger import PowerStatusManger
 from utils import play_text
 
 
@@ -125,53 +126,6 @@ def create_llm_model(model_name):
     )
     return tokenizer, model
 
-def ask_llm(tokenizer, model, question, status_data, schema_data):
-
-    examples = """
-    Example 1:
-    Data: [{"batteryStatus": {"charging": 1}}]
-    Question: Is the battery in charging mode ?
-    Answer: Yes
-
-    Example 2:
-    Data: [{"batteryStatus": {"charging": 0}}]
-    Question: Is the battery in charging mode ?
-    Answer: No
-    
-   Example 3:
-    Data: [{"batteryStatus": {"voltageLevel": 75}}]
-    Question: what is the battery voltage level ?
-    Answer: 75
-
-    ---
-    """
-
-    prompt = f"""Task: Answer the question using ONLY the data provided. 
-    Constraint: Provide a direct answer. No explanations, no intro, no context.
-
-    Data: {json.dumps(status_data, indent=2)}
-    Schema: {json.dumps(schema_data, indent=2)}
-    
-    Question: {question}
-    Answer:"""
-
-
-    prompt    = examples + prompt
-    input_ids = tokenizer.encode(prompt, return_tensors="pt").to(model.device)
-    outputs  = model.generate(
-        input_ids,
-        max_new_tokens = 100,
-        do_sample      = False,
-        tokenizer      = tokenizer,
-        stop_strings   = ["\n", "Answer:", "Question:", "Explanation:"],
-        pad_token_id   = tokenizer.pad_token_id
-    )
-
-
-    generated_tokens    = outputs[0][input_ids.shape[-1]:] # get answer (after prompt)
-    full_generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True)
-    final_answer        = full_generated_text.strip().split('\n')[0].strip()
-    return final_answer
 
 
 def get_schema():
@@ -184,8 +138,9 @@ def get_schema():
 
 def main():
     # MODEL_NAME = "Qwen/Qwen3-0.6B"
-    MODEL_NAME       = "Qwen/Qwen3-1.7B"
-    tokenizer, model = create_llm_model(MODEL_NAME)
+    MODEL_NAME        = "Qwen/Qwen3-1.7B"
+    tokenizer, model  = create_llm_model(MODEL_NAME)
+    powerStatusManger = PowerStatusManger(tokenizer, model)
 
     schema     = get_schema()
     status_msg = load_status_msg()
@@ -195,7 +150,7 @@ def main():
     user_q = "What is the LCU and MCU battery power ?"
     #user_q = "What is LMU power version ?"
 
-    result = ask_llm(tokenizer, model, user_q, status_msg, schema)
+    result = powerStatusManger.ask_llm(tokenizer, model, user_q, status_msg, schema)
     print(f"Q: {user_q}")
     print(f"A: {result}")
 
@@ -214,5 +169,5 @@ if __name__ == '__main__':
 
     print(f"CUDA: {torch.cuda.is_available()}")
 
-    main()
-    #run_unit_tests()
+    #main()
+    run_unit_tests()

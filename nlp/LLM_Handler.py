@@ -3,7 +3,7 @@ import outlines
 import torch
 import logging
 import os
-
+import time
 
 class LLM_Handler:
 
@@ -49,6 +49,7 @@ class LLM_Handler:
         ]
 
         # Build prompt using Qwen chat template
+        start_time = time.time()
         prompt = self.tokenizer.apply_chat_template(
             messages,
             tokenize              = False, # return chat template (string)
@@ -57,6 +58,8 @@ class LLM_Handler:
 
         )
         prompt_size = self.tokenizer.encode(prompt, return_tensors="pt").shape[1]
+        end_time = time.time()
+        logging.info(f'Time to run LLM: {(end_time - start_time):.2f} seconds')
         logging.info(f"Number of prompt tokens: {prompt_size}")
         result = self.json_gen(prompt)
         return result

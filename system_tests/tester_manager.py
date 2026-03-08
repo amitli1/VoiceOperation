@@ -6,6 +6,8 @@ import os
 from pydub import AudioSegment
 import numpy as np
 from app_config.settings import app_settings
+from utils import play_text
+
 
 class TesterManager:
 
@@ -65,6 +67,7 @@ class TesterManager:
         self.test_step.value = self.test_step.value + 1
         if self.test_step.value == 1:
             self.log_step(f'Load: Is_the_battery_in_charging_mode.wav')
+            play_text('Hey jarvis is the battery in charging mode ?')
             samples = self.load_file(rf'./system_tests/wav_commands/Is_the_battery_in_charging_mode.wav')
             return samples
         else:

@@ -9,6 +9,7 @@ import torch
 import jsonref
 import requests
 from utils import play_text
+import time
 
 class PowerStatusManger:
     def __init__(self, tokenizer, model):
@@ -29,23 +30,26 @@ class PowerStatusManger:
         Example 1:
         Data: [{"batteryStatus": {"charging": 1}}]
         Question: Is the battery in charging mode ?
-        Answer: Yes
+        Answer: Yes, the battery is charging.
 
         Example 2:
         Data: [{"batteryStatus": {"charging": 0}}]
         Question: Is the battery in charging mode ?
-        Answer: No
+        Answer: No, the battery is not charging.
 
        Example 3:
         Data: [{"batteryStatus": {"voltageLevel": 75}}]
         Question: what is the battery voltage level ?
-        Answer: 75
+        Answer: The battery voltage level is 75.
 
         ---
         """
 
         prompt = f"""Task: Answer the question using ONLY the data provided. 
-        Constraint: Provide a direct answer. No explanations, no intro, no context.
+        Constraint:
+        - Provide a direct answer.
+        - The answer must be a full sentence that includes the question topic.
+        - Do not explain how you derived the answer.
 
         Data: {json.dumps(status_data, indent=2)}
         Schema: {json.dumps(schema_data, indent=2)}
@@ -56,6 +60,7 @@ class PowerStatusManger:
         prompt    = examples + prompt
         input_ids = tokenizer.encode(prompt, return_tensors="pt").to(model.device)
         logging.info(f"Number of prompt tokens: {input_ids.shape[1]}" )
+        start_time = time.time()
         outputs = model.generate(
             input_ids,
             max_new_tokens=100,
@@ -65,8 +70,10 @@ class PowerStatusManger:
             pad_token_id=tokenizer.pad_token_id
         )
 
-        generated_tokens = outputs[0][input_ids.shape[-1]:]  # get answer (after prompt)
+        generated_tokens    = outputs[0][input_ids.shape[-1]:]  # get answer (after prompt)
         full_generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True)
+        end_time            = time.time()
+        logging.info(f'Total run time: {(end_time-start_time):.2f} seconds')
         final_answer = full_generated_text.strip().split('\n')[0].strip()
         return final_answer
 
