@@ -70,6 +70,12 @@ class TesterManager:
             play_text('Hey jarvis is the battery in charging mode ?')
             samples = self.load_file(rf'./system_tests/wav_commands/Is_the_battery_in_charging_mode.wav')
             return samples
+        elif self.test_step.value == 2:
+            self.log_step(f'Load: What_is_LMU_power_version.wav')
+            play_text('Hey jarvis What is LMU power version ?')
+            samples = self.load_file(rf'./system_tests/wav_commands/What_is_LMU_power_version.wav')
+            return samples
+
         else:
             self.log_step(f'Load: None')
             return None

@@ -17,7 +17,7 @@ class LLM_Handler:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.hf_model  = AutoModelForCausalLM.from_pretrained(
             model_name,
-            dtype      = "auto",
+            dtype      = torch.float16,
             device_map = "auto"
         )
         self.hf_model.generation_config.bos_token_id = self.tokenizer.bos_token_id

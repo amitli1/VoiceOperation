@@ -146,7 +146,11 @@ def warmup():
     except Exception as e:
         logging.error(f'Whisper warmup failed: {e}')
 
+def extract_window(command):
+    if command not in ['show_power_screen', 'show_inventory', 'show_overview', 'show_navigation']:
+        return None
 
+    return command
 
 if __name__ == "__main__":
 
@@ -161,7 +165,8 @@ if __name__ == "__main__":
     create_output_folder()
     #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
     logging.info(f'Cuda: {torch.cuda.is_available()}')
-    llm_model           = LLM_Handler(model_name='Qwen/Qwen3-1.7B')
+    LLM_MODEL_NAME      = 'Qwen/Qwen3-1.7B'
+    llm_model           = LLM_Handler(model_name=LLM_MODEL_NAME)
     power_status_manger = PowerStatusManger(*llm_model.get_llm_model()) # * -> unpack
 
     warmup()
@@ -190,7 +195,8 @@ if __name__ == "__main__":
     # server_thread.start()
 
     logging.info('\n\n\nStart listen for wakeword')
-    file_num = 0
+    file_num     = 0
+    current_page = None
 
     while True:
 
@@ -240,7 +246,11 @@ if __name__ == "__main__":
                 #
                 # # Send
                 # send_command(command)
-                play_wav_file(f"audio_files/{command}.wav", output_device)
+                command_window = extract_window(command)
+                if command_window is not None:
+                    if command_window != current_page:
+                        play_wav_file(f"audio_files/{command}.wav", output_device)
+                        current_page = command_window
 
                 if command == "show_power_screen":
                     power_status_manger.handle_power_status(text)

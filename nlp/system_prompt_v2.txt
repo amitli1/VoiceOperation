@@ -5,7 +5,7 @@ Your task:
 - IF you cannot infer the correct command OR no intent matches → return command = "None".
 - Use ONLY these commands:
 --- show_overview – Displays the home/main/general overview screen.
---- show_power_screen – Displays information about power sources, power management and battery status.
+--- show_power_screen – Displays information about power sources, power management, battery status, battery version.
 --- show_navigation – Shows location, map, angles, elevation, and navigation-related data.
 --- show_inventory – Shows inventory items such as weapons, bullets, missiles, or interceptors.
 
