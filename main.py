@@ -165,7 +165,9 @@ if __name__ == "__main__":
     create_output_folder()
     #openwakeword.utils.download_models(['embedding_model', 'hey_jarvis_v0.1', 'melspectrogram', 'silero_vad'])
     logging.info(f'Cuda: {torch.cuda.is_available()}')
+    #LLM_MODEL_NAME = 'Qwen/Qwen3-0.6B'
     LLM_MODEL_NAME      = 'Qwen/Qwen3-1.7B'
+    #LLM_MODEL_NAME      = 'Orion-zhen/Qwen3-1.7B-AWQ'
     llm_model           = LLM_Handler(model_name=LLM_MODEL_NAME)
     power_status_manger = PowerStatusManger(*llm_model.get_llm_model()) # * -> unpack
 

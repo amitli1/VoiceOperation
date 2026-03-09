@@ -8,18 +8,25 @@ import time
 class LLM_Handler:
 
     def __init__(self, model_name='Qwen/Qwen3-0.6B'):
-        #model_name      = "Qwen/Qwen2.5-0.5B"
-        #model_name     = "Qwen/Qwen3-0.6B"
-        #model_name = "Qwen/Qwen3-1.7B"
         if self.in_docker():
             model_name = "/models/Qwen/Qwen3-0.6B"
         logging.info(f'Load: {model_name}')
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.hf_model  = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            dtype      = torch.float16,
-            device_map = "auto"
-        )
+
+        if "AWQ" in model_name:
+            from awq import AutoAWQForCausalLM
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.hf_model = AutoAWQForCausalLM.from_quantized(
+                model_name,
+                fuse_layers=True,
+                device_map="auto"
+            )
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.hf_model  = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                dtype      = torch.float16,
+                device_map = "auto"
+            )
         self.hf_model.generation_config.bos_token_id = self.tokenizer.bos_token_id
         self.hf_model.generation_config.eos_token_id = self.tokenizer.eos_token_id
         self.hf_model.generation_config.pad_token_id = (
