@@ -1,0 +1,116 @@
+{
+  "title": "McuLradsData",
+  "x-stoplight": {
+    "id": "4a168f36ded65"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "examples": [
+    {
+      "mfuName": "MFU1",
+      "mfuHealth": 0,
+      "cradleStatus": 0,
+      "version": "2.2",
+      "defaultTopicName": "McuLradsData",
+      "talActive": false,
+      "inventory": {
+        "inventoryData": [
+          {
+            "missileID": "string"
+          }
+        ]
+      },
+      "talStatus": 0,
+      "retryStageElevated": {
+        "missileIDs": [
+          "string"
+        ],
+        "talCommand": 0,
+        "is_allowed": true,
+        "tal_operation": {
+          "missileIDs": [
+            "string"
+          ],
+          "talCommand": 0
+        }
+      }
+    }
+  ],
+  "properties": {
+    "mfuName": {
+      "type": "string",
+      "example": "MFU1"
+    },
+    "mfuHealth": {
+      "$ref": "./mfu-health-enum.json"
+    },
+    "cradleStatus": {
+      "$ref": "./cradle-status-enum.json"
+    },
+    "version": {
+      "type": "string",
+      "description": "json schema version",
+      "pattern": "^[1-9]{1,}\\.[0-9]{1,}$",
+      "default": 2.2
+    },
+    "defaultTopicName": {
+      "type": "string",
+      "example": "McuLradsData",
+      "description": "Default topic name for event driven messaging between BE services",
+      "default": "McuLradsData"
+    },
+    "talActive": {
+      "type": "boolean",
+      "description": "If TRUE TAL process is currently active, if FALSE, no TAL processes are activy",
+      "default": false
+    },
+    "isRetry": {
+      "type": "boolean",
+      "description": "Describes a value for retry stage, it is used for both, folded and elevated stages.",
+      "default": false
+    },
+    "inventory": {
+      "$ref": "./inventory.json"
+    },
+    "talStatus": {
+      "$ref": "./tal-status-enum.json"
+    },
+    "retryStageFolded": {
+      "$ref": "./retry-stage.json"
+    },
+    "retryStageElevated": {
+      "$ref": "./retry-stage.json"
+    },
+    "talParticipatingMissileIDs": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "safeArmSwitch": {
+      "$ref": "./safe-arm-switch-enum.json"
+    },
+    "localRemoteSwitch": {
+      "$ref": "./local-remote-state-enum.json"
+    },
+    "operModeSwitch": {
+      "$ref": "./oper-mode-enum.json"
+    }
+  },
+  "required": [
+    "mfuName",
+    "mfuHealth",
+    "cradleStatus",
+    "version",
+    "defaultTopicName",
+    "talActive",
+    "isRetry",
+    "inventory",
+    "talStatus",
+    "retryStageFolded",
+    "retryStageElevated",
+    "safeArmSwitch",
+    "localRemoteSwitch",
+    "operModeSwitch"
+  ]
+}

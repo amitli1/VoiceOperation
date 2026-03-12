@@ -1,0 +1,30 @@
+{
+  "title": "tal-missile-operation",
+  "x-stoplight": {
+    "id": "ty3hmr6t1b3ws"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "examples": [
+    {
+      "missilesID": [
+        "string"
+      ],
+      "talCommand": 0
+    }
+  ],
+  "description": "Ths object describes missiles ID and what tal operation should be performed for this missile ID",
+  "properties": {
+    "do_command": {
+      "type": "boolean",
+      "default": false
+    },
+    "missileID": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "do_command",
+    "missileID"
+  ]
+}

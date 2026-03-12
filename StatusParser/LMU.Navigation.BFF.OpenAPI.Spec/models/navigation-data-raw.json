@@ -1,0 +1,118 @@
+{
+  "title": "NavigationDataRaw",
+  "x-stoplight": {
+    "id": "hgccdo4ixh0uq"
+  },
+  "type": "object",
+  "xml": {
+    "name": "order"
+  },
+  "additionalProperties": false,
+  "examples": [],
+  "description": "Navigation Data message includes self position and ins infomration. It also includes all available navigation information in raw format.",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "json schema version",
+      "pattern": "^[1-9]{1,}\\.[0-9]{1,}$",
+      "default": "2.0"
+    },
+    "defaultTopicName": {
+      "type": "string",
+      "example": "NavigationDataRaw",
+      "default": "NavigationDataRaw",
+      "description": "Default topic name for event driven messaging between BE services"
+    },
+    "selfPosition": {
+      "$ref": "./GeoJsonSchema/Point.json"
+    },
+    "navigationQuality": {
+      "$ref": "./navigation-quality-enum.json"
+    },
+    "insHealth": {
+      "$ref": "./ins-health-enum.json"
+    },
+    "satellites": {
+      "type": "number",
+      "description": "Indication of the number of satellites currently detected by the INS.",
+      "example": 0,
+      "minimum": 0,
+      "default": 0
+    },
+    "insAngles": {
+      "$ref": "./ins-angles.json"
+    },
+    "coordiateReferenceSystem": {
+      "type": "string"
+    },
+    "horizontalDatum": {
+      "type": "string"
+    },
+    "DAGR Position": {
+      "$ref": "./GeoJsonSchema/Point.json"
+    },
+    "verticalDatum": {
+      "type": "string"
+    },
+    "northReference": {
+      "type": "string"
+    },
+    "navTimeTag": {
+      "type": "string"
+    },
+    "positionUpdateReceived": {
+      "type": "string"
+    },
+    "positionValid": {
+      "type": "string"
+    },
+    "attitudeValid": {
+      "type": "string"
+    },
+    "linearVelocityX": {
+      "type": "string"
+    },
+    "linearVelocityY": {
+      "type": "string"
+    },
+    "linearVelocityZ": {
+      "type": "string"
+    },
+    "linearAccX": {
+      "type": "string"
+    },
+    "linearAccY": {
+      "type": "string"
+    },
+    "linearAccZ": {
+      "type": "string"
+    },
+    "angularVelocityAlpha": {
+      "type": "string"
+    },
+    "angularVelocityBeta": {
+      "type": "string"
+    },
+    "angularVelocityGamma": {
+      "type": "string"
+    },
+    "angularAccAlpha": {
+      "type": "string"
+    },
+    "angularAccBeta": {
+      "type": "string"
+    },
+    "angularAccGamma": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "version",
+    "defaultTopicName",
+    "selfPosition",
+    "navigationQuality",
+    "insHealth",
+    "satellites",
+    "insAngles"
+  ]
+}

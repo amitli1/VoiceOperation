@@ -1,0 +1,20 @@
+{
+  "type": "integer",
+  "x-stoplight": {
+    "id": "f29d9cb59c908"
+  },
+  "description": "Operational mode enum\n| Enum Value | Enum Label |\n| ---------- | ---------- |\n|     0      | Training   |\n|     1      | Operation  |\n|     2      | Maintenance|\n|     3      | Unknown    |",
+  "enum": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "x-enumNames": [
+    "Training",
+    "Operation",
+    "Maintenance",
+    "Unknown"
+  ],
+  "default": 0
+}

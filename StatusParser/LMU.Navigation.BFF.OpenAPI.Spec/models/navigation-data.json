@@ -1,0 +1,55 @@
+{
+  "title": "NavigationData",
+  "x-stoplight": {
+    "id": "1e654ee4d8418"
+  },
+  "type": "object",
+  "xml": {
+    "name": "order"
+  },
+  "additionalProperties": false,
+  "examples": [],
+  "description": "Navigation Data message includes self position and ins infomration. all irrelevant data is cleaned for this message.",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "json schema version",
+      "pattern": "^[1-9]{1,}\\.[0-9]{1,}$",
+      "default": "1.1"
+    },
+    "defaultTopicName": {
+      "type": "string",
+      "example": "NavigationData",
+      "default": "NavigationData",
+      "description": "Default topic name for event driven messaging between BE services"
+    },
+    "selfPosition": {
+      "$ref": "./GeoJsonSchema/Point.json"
+    },
+    "navigationQuality": {
+      "$ref": "./navigation-quality-enum.json"
+    },
+    "insHealth": {
+      "$ref": "./ins-health-enum.json"
+    },
+    "satellites": {
+      "type": "number",
+      "description": "Indication of the number of satellites currently detected by the INS.",
+      "example": 0,
+      "minimum": 0,
+      "default": 0
+    },
+    "insAngles": {
+      "$ref": "./ins-angles.json"
+    }
+  },
+  "required": [
+    "version",
+    "defaultTopicName",
+    "selfPosition",
+    "navigationQuality",
+    "insHealth",
+    "satellites",
+    "insAngles"
+  ]
+}

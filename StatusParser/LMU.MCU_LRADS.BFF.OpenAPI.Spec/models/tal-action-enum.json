@@ -1,0 +1,24 @@
+{
+  "title": "TalActionEnum",
+  "x-stoplight": {
+    "id": "106vtark5kti6"
+  },
+  "type": "integer",
+  "description": "Sets action for TAL process\nCancel action cancels process for all phases.\nStop phase 1 stops afte phase 1 is finished and do not proceeds to phase 2.\nThere is no need to stop phase 2 it can be only canceled.\n| Enum Value | Enum Label     |\n| ---------- | ----------     |\n|     0      | Dont do TAL              |\n|     1      | Start phase 1 - folded   |\n|     2      | Start phase 2 - elevated |\n|     3      | Done                     |\n|     4      | Abort                    |\n\n",
+  "enum": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "x-EnumNames": [
+    "DontDoTal",
+    "StartPhase1Folded",
+    "StartPhase2Elevated",
+    "Done",
+    "Abort"
+  ],
+  "default": 0,
+  "examples": []
+}

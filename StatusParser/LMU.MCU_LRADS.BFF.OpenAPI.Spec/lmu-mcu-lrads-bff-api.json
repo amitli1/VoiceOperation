@@ -1,0 +1,304 @@
+{
+  "openapi": "3.0.4",
+  "x-stoplight": {
+    "id": "ddd4327819bef"
+  },
+  "info": {
+    "title": "LMU.MCU_LRADS.BFF- OpenAPI",
+    "description": "This is Power source BFF OpenApi, power source BFF is on of many LMU's services",
+    "termsOfService": "https://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Raf",
+      "url": "None"
+    },
+    "version": "2.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "https://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "None"
+    }
+  ],
+  "paths": {
+    "/mcu-lrads": {
+      "post": {
+        "summary": "Creates and updates mcu lrads data entity",
+        "description": "Adds new information about launcher - maybe irrelevant.",
+        "operationId": "post-add-power-source-data",
+        "requestBody": {
+          "description": "Create a new launcher entity information, we have only 1 launcher so maybe thsi is irrelevant",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./models/mcu-lrads-data.json"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./models/mcu-lrads-data.json"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "mcuLradsAuth": [
+              "write:mcu_lrads_data",
+              "read:mcu_lrads_data"
+            ]
+          }
+        ],
+        "tags": [
+          "MCU LRADS Data"
+        ]
+      },
+      "get": {
+        "summary": "Retrieves most updated launcher data",
+        "description": "this api gets you the most updated launcher data",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "./models/mcu-lrads-data.json"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Invalid status value",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "mcuLradsAuth": [
+              "write:mcu_lrads_data",
+              "read:mcu_lrads_data"
+            ]
+          }
+        ],
+        "operationId": "get-mcu-lrads-data",
+        "tags": [
+          "MCU LRADS Data"
+        ]
+      }
+    },
+    "/tal-operation": {
+      "post": {
+        "summary": "tal-operation",
+        "operationId": "post-tal-operation",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          }
+        },
+        "description": "This api allows to initiate / cancel TAL operation",
+        "tags": [
+          "MCU LRADS Data"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./models/lmu-mcu-tal-operation.json"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/maintenance/inventory": {
+      "get": {
+        "summary": "Inventory maintenance message",
+        "tags": [
+          "MCU LRADS Data"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./models/inventory.json"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-maintenance-inventory",
+        "description": "Inventory maintenance message"
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "mcuLradsAuth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
+            "scopes": {
+              "write:mcu_lrads_data": "modify power source data",
+              "read:mcu_lrads_data": "read power source data"
+            }
+          }
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "MCU LRADS Data"
+    }
+  ]
+}

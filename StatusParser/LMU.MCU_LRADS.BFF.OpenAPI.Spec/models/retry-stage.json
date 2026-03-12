@@ -1,0 +1,20 @@
+{
+  "title": "lmu-mcu-tal-operation",
+  "x-stoplight": {
+    "id": "yhwrgbmant7so"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "description": "This sends a request for tal operation that is translated into tal commands for MCU",
+  "properties": {
+    "is_allowed": {
+      "type": "boolean"
+    },
+    "tal_operation": {
+      "$ref": "./lmu-mcu-tal-operation.json"
+    }
+  },
+  "required": [
+    "is_allowed"
+  ]
+}

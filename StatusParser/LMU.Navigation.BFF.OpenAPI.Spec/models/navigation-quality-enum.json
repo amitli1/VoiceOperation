@@ -1,0 +1,20 @@
+{
+  "title": "NavigationQualityEnum",
+  "x-stoplight": {
+    "id": "00bb7eaa48e7d"
+  },
+  "type": "integer",
+  "description": "Ins navigation quality type enum \n\n| Enum Value | Enum Label |\n| ---------- | ---------- |\n|     0      | Invalid    |\n|     1      | Degraded   |\n|     2      | Valid      |",
+  "additionalProperties": false,
+  "enum": [
+    0,
+    1,
+    2
+  ],
+  "x-EnumNames": [
+    "Invalid",
+    "Degraded",
+    "Valid"
+  ],
+  "default": 0
+}

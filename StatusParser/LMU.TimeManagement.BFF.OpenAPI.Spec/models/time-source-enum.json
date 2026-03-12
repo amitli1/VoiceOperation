@@ -1,0 +1,25 @@
+{
+  "title": "TimeSourceEnum",
+  "x-stoplight": {
+    "id": "06s3jfv7eo5ru"
+  },
+  "type": "integer",
+  "description": "Vehicle power type enum \n\n| Enum Value | Enum Label         |\n| ---------- | -------------------|\n|     0      | DAGR               |\n|     1      | Internal GPS       |\n|     2      | External Network   |\n|     3      | Internal Clock     |\n",
+  "additionalProperties": false,
+  "enum": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "x-EnumNames": [
+    "DAGR",
+    "Internal GPS",
+    "External Network",
+    "Internal Clock"
+  ],
+  "default": 0,
+  "x-tags": [
+    "Time Managment"
+  ]
+}

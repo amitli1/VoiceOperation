@@ -1,0 +1,59 @@
+{
+  "title": "inventory",
+  "x-stoplight": {
+    "id": "gww61tz9uawsv"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Missile inventory, it's used to understand what is total bumber of missiles and what are they ID's",
+  "properties": {
+    "missileID": {
+      "type": "string"
+    },
+    "missileStatus": {
+      "$ref": "./missile-status-enum.json"
+    },
+    "SwVersion": {
+      "type": "string"
+    },
+    "cellNumber": {
+      "type": "string",
+      "pattern": "^[1-8]$",
+      "description": "This field is caclulated based on the array index of current missile (in missile array)"
+    },
+    "availabilityStatus": {
+      "$ref": "./missile-availability-enum.json"
+    },
+    "missileTalStatus": {
+      "$ref": "./missile-tal-progress-enum.json"
+    },
+    "usable": {
+      "$ref": "./usable-missile-enum.json"
+    },
+    "overheat": {
+      "type": "boolean",
+      "description": "Indicates if missile is overheated",
+      "default": false
+    },
+    "runtime": {
+      "type": "integer",
+      "default": 0,
+      "description": "Indicates the total runtime of missile, initial number is 0, this is updated only via the launcher."
+    },
+    "serialNum": {
+      "type": "integer",
+      "description": "Indicates missile serial number that is only available after turning the missile on. will be blank untill missile is turned on atleast 1 time."
+    }
+  },
+  "required": [
+    "missileID",
+    "missileStatus",
+    "SwVersion",
+    "cellNumber",
+    "availabilityStatus",
+    "missileTalStatus",
+    "usable",
+    "overheat",
+    "runtime"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "title": "TimeSourceData",
+  "x-stoplight": {
+    "id": "rtxjjrew671t6"
+  },
+  "type": "object",
+  "xml": {
+    "name": "order"
+  },
+  "additionalProperties": false,
+  "examples": [],
+  "description": "This message sets time source that user selected",
+  "x-tags": [
+    "TimeManagment"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "json schema version",
+      "pattern": "^[1-9]{1,}\\.[0-9]{1,}$",
+      "default": "1.1"
+    },
+    "defaultTopicName": {
+      "type": "string",
+      "example": "TimeSourceData",
+      "default": "TimeSourceData",
+      "description": "Default topic name for event driven messaging between BE services"
+    },
+    "timeSource": {
+      "$ref": "./time-source-enum.json"
+    }
+  },
+  "required": [
+    "version",
+    "defaultTopicName",
+    "timeSource"
+  ]
+}

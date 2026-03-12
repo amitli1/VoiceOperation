@@ -1,0 +1,21 @@
+{
+  "type": "integer",
+  "x-stoplight": {
+    "id": "z6m4243um35zr"
+  },
+  "title": "UsableMissileEnum",
+  "description": "This is usbale missile indication, we will use it to determine missile bit status in FE.\n| Enum Value | Enum Label  |\n| ---------- | ----------  |\n|     0      | Unknown     |\n|     1      | Avalable    |\n|     2      | not avalable|\n|     3      | not present |",
+  "enum": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "x-EnumNames": [
+    "Unknown",
+    "Available",
+    "NotAvailable",
+    "NotPresent"
+  ],
+  "default": 0
+}

@@ -1,0 +1,16 @@
+{
+  "type": "integer",
+  "x-stoplight": {
+    "id": "sxgobqbwt72q3"
+  },
+  "description": "| Enum Value | Enum Label |\n| ---------- | ---------- |\n|     0      |    Safe    |\n|     1      |    Arm     |",
+  "enum": [
+    0,
+    1
+  ],
+  "x-enumNames": [
+    "Safe",
+    "Arm"
+  ],
+  "default": 0
+}

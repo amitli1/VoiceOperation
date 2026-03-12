@@ -1,0 +1,25 @@
+{
+  "title": "TimSyncStatusEnum",
+  "x-stoplight": {
+    "id": "90xcqgapsj1gp"
+  },
+  "type": "integer",
+  "description": "Vehicle power type enum \n\n| Enum Value | Enum Label |\n| ---------- | ---------- |\n|     0      | NoComm     |\n|     1      | Init       |\n|     2      | Ready      |\n|     2      | NotReady  |\n ",
+  "additionalProperties": false,
+  "enum": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "x-EnumNames": [
+    "NoComm",
+    "init",
+    "Ready",
+    "NotReady"
+  ],
+  "default": 0,
+  "x-tags": [
+    "Time Managment"
+  ]
+}

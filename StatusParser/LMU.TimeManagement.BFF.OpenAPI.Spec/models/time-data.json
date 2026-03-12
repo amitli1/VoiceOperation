@@ -1,0 +1,66 @@
+{
+  "title": "TimeData",
+  "x-stoplight": {
+    "id": "1e654ee4d8418"
+  },
+  "type": "object",
+  "xml": {
+    "name": "order"
+  },
+  "additionalProperties": false,
+  "examples": [],
+  "description": "Time Data message includes time sync status, date and time",
+  "x-tags": [
+    "TimeManagment"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "json schema version",
+      "pattern": "^[1-9]{1,}\\.[0-9]{1,}$",
+      "default": "3.0"
+    },
+    "defaultTopicName": {
+      "type": "string",
+      "example": "TimeData",
+      "default": "TimeData",
+      "description": "Default topic name for event driven messaging between BE services"
+    },
+    "syncStatus": {
+      "$ref": "./time-sync-status-enum.json"
+    },
+    "lastSyncDateTime": {
+      "type": "string",
+      "description": "Time when last sync status was: SYNCED",
+      "example": "24/08/2025 14:43:41 +03:00",
+      "format": "date-time"
+    },
+    "currentDate": {
+      "type": "string",
+      "example": "2025-07-15",
+      "description": "This is current date  ",
+      "format": "date"
+    },
+    "currentDateTime": {
+      "type": "string",
+      "example": "24/08/2025 14:43:41 +03:00",
+      "description": "Current system date and time",
+      "format": "date-time"
+    },
+    "timeSource": {
+      "$ref": "./time-source-enum.json"
+    },
+    "extTimeSystemStatus": {
+      "$ref": "./external-time-system-status.json"
+    }
+  },
+  "required": [
+    "version",
+    "defaultTopicName",
+    "syncStatus",
+    "lastSyncDateTime",
+    "currentDate",
+    "currentDateTime",
+    "timeSource"
+  ]
+}

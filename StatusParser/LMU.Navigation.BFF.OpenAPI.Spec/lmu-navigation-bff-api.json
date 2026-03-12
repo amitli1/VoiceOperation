@@ -1,0 +1,186 @@
+{
+  "openapi": "3.0.4",
+  "x-stoplight": {
+    "id": "e2f88c7e9baf2"
+  },
+  "info": {
+    "title": "LMU.Navigation.BFF- OpenAPI 3.0",
+    "description": "This is Navigation BFF OpenApi,Navigation service is on of many LMU's services",
+    "termsOfService": "https://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Raf",
+      "url": "None"
+    },
+    "version": "1.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "https://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "None"
+    }
+  ],
+  "paths": {
+    "/navigation-data": {
+      "get": {
+        "summary": "Retrieves most updated navigation data",
+        "description": "this api gets you the most updated navigation data",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "./models/navigation-data.json"
+                  }
+                },
+                "examples": {}
+              }
+            }
+          },
+          "204": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Invalid status value",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "navigationAuth": [
+              "write:navigationData",
+              "read:navigationData"
+            ]
+          }
+        ],
+        "operationId": "get-navigation-data",
+        "tags": [
+          "Navigation data"
+        ]
+      },
+      "post": {
+        "summary": "Creates and updates navigation information",
+        "operationId": "post-navigation-data",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./models/navigation-data.json"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          }
+        },
+        "description": "This endpoints allows to create and maintain updated information about navigation.",
+        "tags": [
+          "Navigation data"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./models/navigation-data.json"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "navigationAuth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://example.com/oauth/authorize",
+            "scopes": {
+              "write:navigation_data": "modify navigation data",
+              "read:navigation_data": "read navigation data"
+            }
+          }
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Navigation data"
+    }
+  ]
+}

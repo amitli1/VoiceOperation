@@ -1,0 +1,17 @@
+{
+  "title": "MissileStatusEnum",
+  "x-stoplight": {
+    "id": "ul1s7vw8nuy0y"
+  },
+  "type": "integer",
+  "description": "Indicates missile status, it can be Off / On(Ready) / IN TAL PROCESS / PENDING\nIN TAL PROCESS meens that this missile is currently involved in TAL process and yet not finished it.\nPENDING means that some operation was requested for this missile, BUT yet not started.\n| Enum Value | Enum Label     |\n| ---------- | ----------     |\n|     0      | Off            |\n|     1      | On             |\n",
+  "enum": [
+    0,
+    1
+  ],
+  "x-EnumNames": [
+    "Off",
+    "On"
+  ],
+  "default": 0
+}

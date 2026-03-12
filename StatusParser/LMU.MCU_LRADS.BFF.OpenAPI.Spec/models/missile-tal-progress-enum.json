@@ -1,0 +1,23 @@
+{
+  "title": "TalProgressStatusEnum",
+  "x-stoplight": {
+    "id": "8fc852wpu9evz"
+  },
+  "type": "integer",
+  "description": "Missile TAL result enum\n| Enum Value | Enum Label       |\n| ---------- | ----------       |\n|     0      | TalNotPerformed  |\n|     1      | Phase1And2OK     |\n|     2      | Phase1And2Failure|\n|     3      | Phase3OK         |\n|     4      | Phase3Failure    |",
+  "enum": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "x-EnumNames": [
+    "TalNotPerformed",
+    "Phase1And2OK",
+    "Phase1And2Failure",
+    "Phase3OK",
+    "Phase3Failure"
+  ],
+  "default": 0
+}

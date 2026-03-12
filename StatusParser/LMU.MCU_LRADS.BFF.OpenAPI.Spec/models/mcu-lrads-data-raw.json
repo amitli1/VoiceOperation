@@ -1,0 +1,58 @@
+{
+  "title": "McuLradsDataRaw",
+  "x-stoplight": {
+    "id": "unismoxduhc4e"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "mfuName": {
+      "type": "string",
+      "example": "MFU1"
+    },
+    "mfuHealth": {
+      "$ref": "./mfu-health-enum.json"
+    },
+    "cradleStatus": {
+      "$ref": "./cradle-status-enum.json"
+    },
+    "missileCount": {
+      "type": "integer",
+      "format": "uint16",
+      "example": 0,
+      "description": "ExistingMslNum"
+    },
+    "version": {
+      "type": "string",
+      "description": "json schema version",
+      "pattern": "^[1-9]{1,}\\.[0-9]{1,}$",
+      "default": 1
+    },
+    "defaultTopicName": {
+      "type": "string",
+      "example": "McuLradsDataRaw",
+      "description": "Default topic name for event driven messaging between BE services",
+      "default": "McuLradsDataRaw"
+    },
+    "safeArmSwitch": {
+      "$ref": "./safe-arm-switch-enum.json"
+    },
+    "localRemoteSwitch": {
+      "$ref": "./local-remote-state-enum.json"
+    },
+    "operModeSwitch": {
+      "$ref": "./hwc-mode-enum.json"
+    }
+  },
+  "required": [
+    "mfuName",
+    "mfuHealth",
+    "cradleStatus",
+    "missileCount",
+    "version",
+    "defaultTopicName",
+    "safeArmSwitch",
+    "localRemoteSwitch",
+    "operModeSwitch"
+  ]
+}

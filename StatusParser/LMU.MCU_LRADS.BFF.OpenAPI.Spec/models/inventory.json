@@ -1,0 +1,50 @@
+{
+  "title": "inventory",
+  "x-stoplight": {
+    "id": "qzkyke8vk0n9f"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "description": "Missile inventory, it's used to understand what is total bumber of missiles and what are they ID's",
+  "examples": [
+    {
+      "inventoryData": [
+        {
+          "missileID": "string"
+        }
+      ]
+    }
+  ],
+  "properties": {
+    "inventoryData": {
+      "type": "array",
+      "items": {
+        "$ref": "./inventory-data.json"
+      }
+    },
+    "defaultTopicName": {
+      "type": "string",
+      "default": "Inventory"
+    },
+    "version": {
+      "type": "string",
+      "default": "2.0",
+      "pattern": "^[1-9]{1,}\\.[0-9]{1,}$"
+    },
+    "existingMissileCount": {
+      "type": "string",
+      "pattern": "^[0-8]$"
+    },
+    "availableMissileCount": {
+      "type": "string",
+      "pattern": "^[0-8]$"
+    }
+  },
+  "required": [
+    "inventoryData",
+    "defaultTopicName",
+    "version",
+    "existingMissileCount",
+    "availableMissileCount"
+  ]
+}

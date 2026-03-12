@@ -1,0 +1,174 @@
+{
+  "openapi": "3.0.4",
+  "x-stoplight": {
+    "id": "e2f88c7e9baf2"
+  },
+  "info": {
+    "title": "LMU.TimeManagment.BFF- OpenAPI",
+    "description": "This is Time Management service OpenApi,TIme Managment service is on of many LMU's services",
+    "termsOfService": "https://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Raf",
+      "url": "None"
+    },
+    "version": "2.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "https://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "None"
+    }
+  ],
+  "paths": {
+    "/time-source-data": {
+      "get": {
+        "summary": "retrieves most updated time data",
+        "description": "this api gets you the most updated time data",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "./models/time-data.json"
+                  }
+                },
+                "examples": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "timeManagementAuth": [
+              "write:navigationData",
+              "read:navigationData"
+            ]
+          }
+        ],
+        "operationId": "get-time-data",
+        "tags": [
+          "Time Managment"
+        ]
+      },
+      "post": {
+        "summary": "Sets time source that user selected",
+        "operationId": "post-time-source-data",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "./models/problem-details.json"
+                }
+              }
+            }
+          }
+        },
+        "description": "This endpoint sets time source that user has selcted",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./models/time-source-data.json"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Time Managment"
+        ]
+      },
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {
+      "timeManagementAuth": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://example.com/oauth/authorize",
+            "scopes": {
+              "write:navigation_data": "modify navigation data",
+              "read:navigation_data": "read navigation data"
+            }
+          }
+        }
+      },
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Time Managment"
+    }
+  ]
+}

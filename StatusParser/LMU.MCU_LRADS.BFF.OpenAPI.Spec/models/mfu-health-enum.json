@@ -1,0 +1,19 @@
+{
+  "title": "MfuHealthEnum",
+  "x-stoplight": {
+    "id": "89ae0c42afa30"
+  },
+  "type": "integer",
+  "description": "Mfu health status type enum \n\n| Enum Value | Enum Label |\n| ---------- | ---------- |\n|     0      | Degraded       |\n|     1      | Good |\n|     -1      | Malfunctioning ",
+  "enum": [
+    0,
+    1,
+    -1
+  ],
+  "x-EnumNames": [
+    "Degraded",
+    "Good",
+    "Malfunctioning"
+  ],
+  "default": 0
+}

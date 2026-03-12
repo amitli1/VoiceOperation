@@ -1,0 +1,22 @@
+{
+  "title": "TalStatusEnum",
+  "x-stoplight": {
+    "id": "87ztqwjdb7qmj"
+  },
+  "type": "integer",
+  "description": "Represents Transfer Alligment process from MCU perspective. \n\n| Enum Value | Enum Label              |\n| ---------- | ----------              |\n|     0      | Not in process          |\n|     1      | Phase 1 and 2 in process|\n|     2      | Phase 3 in process      |\n|     3      | Abort in proces         |\n\n",
+  "enum": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "x-EnumNames": [
+    "NotInProcess",
+    "Phase1And2InProcess",
+    "Phase3InProcess",
+    "AbortInProcess"
+  ],
+  "default": 0,
+  "examples": []
+}

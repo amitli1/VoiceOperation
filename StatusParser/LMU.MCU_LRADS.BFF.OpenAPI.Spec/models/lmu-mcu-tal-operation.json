@@ -1,0 +1,31 @@
+{
+  "title": "lmu-mcu-tal-operation",
+  "x-stoplight": {
+    "id": "8wgw4w88kknc0"
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "description": "This sends a request for tal operation that is translated into tal commands for MCU",
+  "properties": {
+    "missiles_list": {
+      "type": "array",
+      "items": {
+        "$ref": "./tal-missile-operation.json"
+      }
+    },
+    "isRetry": {
+      "type": "boolean"
+    },
+    "tal_command": {
+      "$ref": "./tal-action-enum.json"
+    },
+    "updateNum": {
+      "type": "integer",
+      "description": "Autobumped by sender(retry of sending this command not autobumped)\nThis field indicates the number of update(per message), we will use it in cases when delivery failes and we want to indicate that this is another attempt message"
+    }
+  },
+  "required": [
+    "missiles_list",
+    "updateNum"
+  ]
+}

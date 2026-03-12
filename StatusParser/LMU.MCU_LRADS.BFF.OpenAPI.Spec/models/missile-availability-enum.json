@@ -1,0 +1,18 @@
+{
+  "title": "MissileAvailabilityEnum",
+  "x-stoplight": {
+    "id": "avud7kmay12pf"
+  },
+  "type": "integer",
+  "description": "Charging enum\n| Enum Value | Enum Label    |\n| ---------- | ----------    |\n|     0      | not available |\n|     1      | available     |\n",
+  "additionalProperties": false,
+  "enum": [
+    0,
+    1
+  ],
+  "x-EnumNames": [
+    "NotAvailable",
+    "Available"
+  ],
+  "default": 0
+}

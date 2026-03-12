@@ -1,0 +1,18 @@
+{
+  "type": "integer",
+  "title": "CradleStatusEnum",
+  "description": "Cradle  status type enum \n\n| Enum Value | Enum Label |\n| ---------- | ---------- |\n|     0      | Unknown    |\n|     1      | Folded     |\n|     2      | InBetween  |\n|     3      | Elevated   |",
+  "enum": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "x-EnumNames": [
+    "Unknown",
+    "Folded",
+    "InBetween",
+    "Elevated"
+  ],
+  "default": 0
+}

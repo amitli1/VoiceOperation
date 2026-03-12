@@ -1,0 +1,41 @@
+{
+  "title": "InsAngles",
+  "x-stoplight": {
+    "id": "km7njlk87i5s2"
+  },
+  "type": "object",
+  "xml": {
+    "name": "order"
+  },
+  "additionalProperties": false,
+  "examples": [],
+  "description": "INS anglesare  current leveling state (angles) of the cradle The INS angles are indicated on 3 axes: Azimuth, Roll, and Pitch. ",
+  "properties": {
+    "azimuth": {
+      "type": "string",
+      "example": "182",
+      "default": 0,
+      "pattern": "^(360|3[0-5][0-9]|[12]?[0-9]?[0-9])$",
+      "description": "Azimuth limits are 0° to 360°"
+    },
+    "roll": {
+      "type": "string",
+      "description": "Roll limits are -180° to 180°",
+      "example": "1.0",
+      "default": 0,
+      "pattern": "^(-?180(\\.0+)?|-?1[0-7]\\d(\\.\\d+)?|-?\\d{1,2}(\\.\\d+)?)$"
+    },
+    "pitch": {
+      "type": "string",
+      "description": "Pitch limits are -90° to 90°",
+      "example": "1.0",
+      "default": 0,
+      "pattern": "^-?(90|[1-8]?\\d)(\\.\\d+)?$"
+    }
+  },
+  "required": [
+    "azimuth",
+    "roll",
+    "pitch"
+  ]
+}
