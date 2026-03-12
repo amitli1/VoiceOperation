@@ -50,6 +50,7 @@ class PowerStatusManger:
         - Provide a direct answer.
         - The answer must be a full sentence that includes the question topic.
         - Do not explain how you derived the answer.
+        - If the answer cannot be found in the data, reply exactly: "The requested information cannot be determined from the provided data."
 
         Data: {json.dumps(status_data, indent=2)}
         Schema: {json.dumps(schema_data, indent=2)}
