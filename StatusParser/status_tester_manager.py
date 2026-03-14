@@ -1,12 +1,18 @@
-from StatusParser.main_status_parser import create_llm_model, get_schema
+from StatusParser.main_status_parser  import create_llm_model
 from StatusParser.power_status_manger import PowerStatusManger
+from pathlib                          import Path
+import json
+import jsonref
+import os
+import logging
 
 
 class StatusTesterManager:
     def __init__(self, model_name):
         self.tokenizer, self.model = create_llm_model(model_name)
-        self.schema                = get_schema()
         self.powerStatusManger     = PowerStatusManger(self.tokenizer, self.model)
+
+
 
     def create_power_status_message(self):
         power_source_status_msg = [
@@ -47,6 +53,16 @@ class StatusTesterManager:
         answer = "15"
         return user_q, answer
 
+    def create_test_no_answer_1(self):
+        user_q = "What is RMS battery power ?"
+        answer = ""
+        return user_q, answer
+
+    def create_test_no_answer_2(self):
+        user_q = "What is your name ?"
+        answer = ""
+        return user_q, answer
+
 
 
     def run_tests(self):
@@ -54,26 +70,40 @@ class StatusTesterManager:
         power_source_status_msg = self.create_power_status_message()
 
         user_q, gt_answer       = self.create_test_version()
-        results                 = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg, self.schema)
+        results                 = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg)
         print(f"Q: {user_q}")
         print(f"\tAnswer : {results}")
         print(f"\tGT     : {gt_answer}")
 
         user_q, gt_answer = self.create_test_charging()
-        results           = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg, self.schema)
+        results           = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg)
         print(f"Q: {user_q}")
         print(f"\tAnswer : {results}")
         print(f"\tGT     : {gt_answer}")
 
         user_q, gt_answer = self.create_test_lcu_and_mcu_power()
-        results = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg, self.schema)
+        results = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg)
         print(f"Q: {user_q}")
         print(f"\tAnswer : {results}")
         print(f"\tGT     : {gt_answer}")
 
         user_q, gt_answer = self.create_test_battery_voltage()
-        results = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg, self.schema)
+        results = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg)
         print(f"Q: {user_q}")
         print(f"\tAnswer : {results}")
         print(f"\tGT     : {gt_answer}")
+
+        user_q, gt_answer = self.create_test_no_answer_1()
+        results = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg)
+        print(f"Q: {user_q}")
+        print(f"\tAnswer : {results}")
+        print(f"\tGT     : {gt_answer}")
+
+
+        user_q, gt_answer = self.create_test_no_answer_2()
+        results = self.powerStatusManger.ask_llm(self.tokenizer, self.model, user_q, power_source_status_msg)
+        print(f"Q: {user_q}")
+        print(f"\tAnswer : {results}")
+        print(f"\tGT     : {gt_answer}")
+
 

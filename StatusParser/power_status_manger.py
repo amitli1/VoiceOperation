@@ -19,50 +19,69 @@ class PowerStatusManger:
 
     def handle_power_status(self, user_q):
         status_msg = self.load_status_msg()
-        result     = self.ask_llm(self.tokenizer, self.model, user_q, status_msg, self.schema)
+        result     = self.ask_llm(self.tokenizer, self.model, user_q, status_msg)
         logging.info(f"Q: {user_q}")
         logging.info(f"A: {result}")
         play_text(result)
 
-    def ask_llm(self, tokenizer, model, question, status_data, schema_data):
 
-        when_no_found = ' - If the answer cannot be found in the data, reply exactly: "The requested information cannot be determined from the provided data."'
-        when_no_found = ""
-
-        examples = """
-        Example 1:
-        Data: [{"batteryStatus": {"charging": 1}}]
-        Question: Is the battery in charging mode ?
-        Answer: Yes, the battery is charging.
-
-        Example 2:
-        Data: [{"batteryStatus": {"charging": 0}}]
-        Question: Is the battery in charging mode ?
-        Answer: No, the battery is not charging.
-
-       Example 3:
-        Data: [{"batteryStatus": {"voltageLevel": 75}}]
-        Question: what is the battery voltage level ?
-        Answer: The battery voltage level is 75.
-
-        ---
+    def create_prompt(self, schema_data, status_data, user_question):
+        prompt = f"""
+        ### Task
+        You are a data extraction assistant. Your goal is to answer a user's question using ONLY the provided status data.
+        
+        ### Data Context
+        - **Schema Definition**: {schema_data}
+        - **Status Message (JSON)**: {status_data}
+        
+        ### Instructions
+        1. **Analyze the Question**: Identify the specific field or metric the user is asking about based on the provided schema.
+        2. **Retrieve Data**: Extract the value from the status message JSON.
+        3. **Handle Missing Information**: If the question asks for something not present in the JSON, or if the relevant field is null/empty, return exactly: "empty result".
+        4. **Formulate the Response**: If an answer exists, provide it as a single, clear, full sentence. The sentence must explicitly include the topic of the question (e.g., if asked about "battery level," the answer must include the words "battery level").
+        
+        ### Constraints
+        - Do not use outside knowledge.
+        - Do not mention the JSON structure or field names (e.g., say "The temperature is..." instead of "The field 'temp_c' is...").
+        - If there is no certain answer, do not guess. Return "empty result".
+        
+        ### Examples:
+        {self.get_prompt_example()}
+        
+        ### User Question:
+        "{user_question}"
+        
+        ### Answer:
         """
 
-        prompt = f"""Task: Answer the question using ONLY the data provided. 
-        Constraint:
-        - Provide a direct answer.
-        - The answer must be a full sentence that includes the question topic.
-        - Do not explain how you derived the answer.
-        {when_no_found}
-       
+        return prompt
 
-        Data: {json.dumps(status_data, indent=2)}
-        Schema: {json.dumps(schema_data, indent=2)}
+    def get_prompt_example(self):
+        examples = """                
+                Example 1:
+                Data: [{"batteryStatus": {"charging": 1}}]
+                Question: Is the battery in charging mode ?
+                Answer: Yes, the battery is charging.
 
-        Question: {question}
-        Answer:"""
+                Example 2:
+                Data: [{"batteryStatus": {"charging": 0}}]
+                Question: Is the battery in charging mode ?
+                Answer: No, the battery is not charging.
 
-        prompt    = examples + prompt
+               Example 3:
+                Data: [{"batteryStatus": {"voltageLevel": 75}}]
+                Question: what is the battery voltage level ?
+                Answer: The battery voltage level is 75.                
+                """
+        return examples
+
+
+    def ask_llm(self, tokenizer, model, question, status_data):
+
+        schema_data = self._get_schema()
+        prompt      = self.create_prompt(json.dumps(schema_data, indent=2),
+                                         json.dumps(status_data, indent=2),
+                                         question)
         input_ids = tokenizer.encode(prompt, return_tensors="pt").to(model.device)
         logging.info(f"Number of prompt tokens: {input_ids.shape[1]}" )
         start_time = time.time()
@@ -79,6 +98,7 @@ class PowerStatusManger:
         full_generated_text = tokenizer.decode(generated_tokens, skip_special_tokens=True)
         end_time            = time.time()
         logging.info(f'Total run time: {(end_time-start_time):.2f} seconds')
+
         final_answer = full_generated_text.strip().split('\n')[0].strip()
         return final_answer
 
