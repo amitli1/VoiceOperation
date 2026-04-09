@@ -16,11 +16,11 @@ import requests
 import json
 import uvicorn
 import threading
-import librosa
 from app_config.settings import app_settings
 from system_tests.tester_manager import TesterManager
 from utils import get_input_device, get_output_device, get_running_ip, play_wav_file
 from pydub import AudioSegment
+import platform
 
 
 def get_timestamp_string():
@@ -152,6 +152,14 @@ def extract_window(command):
 
     return command
 
+
+def get_enable_speex():
+    if platform.system() == "Linux":
+        logging.info("Run on Linux - Enable speex mode")
+        return True
+    logging.info("Run on Windows - Disable speex mode")
+    return False
+
 if __name__ == "__main__":
 
     logging.info('Start')
@@ -173,10 +181,11 @@ if __name__ == "__main__":
 
     warmup()
 
-    owwModel = openwakeword.Model(
+    enable_speex = get_enable_speex()
+    owwModel     = openwakeword.Model(
         wakeword_models                = ["hey_jarvis"],
         inference_framework            = "onnx",
-        enable_speex_noise_suppression = True
+        enable_speex_noise_suppression = enable_speex
     )
     vad_model    = load_silero_vad()
     audio_buffer = deque(maxlen=10)
